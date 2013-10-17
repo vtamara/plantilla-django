@@ -1,3 +1,10 @@
+
+<table>
+  <tr>
+    <td>Vea como emplear esta plantilla en http://vtamara.github.io/plantilla-django/</td>
+  </tr>
+</table>
+
 # Proyecto {{ project_name|title }} #
 
 ## Acerca de ##
