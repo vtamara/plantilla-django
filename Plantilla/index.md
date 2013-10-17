@@ -1,3 +1,10 @@
+---
+layout: page
+title: "Plantilla"
+description: ""
+---
+
+{% include JB/setup %}
 
 # Plantilla de proyectos para Django 1.5 
 
@@ -85,13 +92,3 @@ There isn't a need to add settings/local.py to your source control, but there ar
 
 The second school of thought is that all settings should be versioned, so that as much of the code/settings as possible is the same across all developers and test/production servers. If you prefer this method, then make sure *all* necessary settings are properly set in settings/base.py, and then edit settings/__init__.py so it no longer reraises the exception. (ie, by replacing 'raise' with 'pass'). As it is, settings/local.py should only be overriding settings from settings/base.py anyway. (You could also just set the DJANGO_SETTINGS_MODULE environment variable to "{{ project_name }}.settings.base" directly.)
 
-
-Fuentes de Plantilla y Estándares para proyectos con Django
-===========================================================
-
-Puede ver la documentación y los estándares en:
-http://vtamara.github.io/plantilla-django
-
-Estas fuentes emplean jekyll, jekyll-bootstrap y twitter-bootstrap
-
-Agradecimientos a http://www.sofhouse.net
