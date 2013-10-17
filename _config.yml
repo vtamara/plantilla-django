@@ -1,0 +1,8 @@
+name: Your New Jekyll Site
+markdown: redcarpet
+pygments: true
+timezone: America/Bogota
+safe: true
+lsi: false
+pygments: true
+
