@@ -15,7 +15,9 @@
 
 
 par="$@"
-op=$1
+op1=$1
+op2=$2
+op3=$3
 tf3=/tmp/dialog_3_$$
 # Verifica parametros y entorno e inicializa variables 
 
@@ -60,7 +62,8 @@ function instalapythondjango {
 	sudo easy_install virtualenv;
 	sudo easy_install pip;
 	sudo pip install virtualenvwrapper;
-
+	sudo pip install Django
+	
 	grep WORKON_HOME ~/.bashrc > /dev/null 2>&1
 	if (test "$?" != "0") then {
 		cat >> ~/.bashrc <<EOF
@@ -310,51 +313,62 @@ function pipymensaje {
 }
 
 
-if (test "$op" = "ini") then {
-	dialog --title "Ayuda a iniciar proyecto con Django" --msgbox "Por instalar Apache, Python, Django, virtualenv, pip y virtualenvwrapper" 10 60
-
-		instalapythondjango
-
-		dialog --title "Motor de base de datos" --menu "¿Qué motor de bases de datos configurar?" 10 60 5 s "SQLite" p "PostgreSQL" o "Oracle" 2> $tf3
+if (test "$op1" != "lib") then {
+	nompr=$op1
+	motorbd=$op2
+	sudo apt-get install dialog
+	if (test "$nompr" = "") then {
+		dialog --title "Ayuda a iniciar proyecto con Django" --msgbox "Por instalar Apache, Python, Django, virtualenv, pip y virtualenvwrapper" 10 60
+	} else {
+		echo "Instalando lo necesario para django";
+	} fi;
+	instalapythondjango
+	if (test "$motorbd" = "") then {
+		dialog --title "Motor de base de datos" --menu "¿Qué motor de bases de datos configurar?" 10 60 5 s "SQLite" o "Oracle" 2> $tf3
 		retv=$?
 		c=$(cat $tf3)
 		[ $retv -eq 1 -o $retv -eq 255 ] && exit
+	} else {
+		c=$motorbd
+	} fi;
 
-		case $c in
-		p) 
+	case $c in
+		[pP]*) 
 		exit 1  
 		;; 
-	o) verificaoracle
+		[oO]*) verificaoracle
 		instalaoracle
 		;;
-	*) 
+		*) 
 		;;
 	esac
 
-		vd=`python -c "import django; print(django.get_version())"`
-		if (test "$?" != "0" -o "$vd" -lt "1.5") then {
-			echo "No está instalado Django superior a 1.5";
-			exit 1;
-		} fi;
+	vd=`python -c "import django; print(django.get_version())" | sed -e "s/\.//g;s/^\(..\).*/\1/g"`
+	if (test "$?" != "0" -o "$vd" -lt "15") then {
+		echo "No está instalado Django superior a 1.5";
+		exit 1;
+	} fi;
 
-	dialog --title "Nombre de la aplicacion" --inputbox "Se recomienda solo minusculas, sin espacios y corto" 10 60 2> $tf3
+	if (test "$nompr" = "") then {
+		dialog --title "Nombre de la aplicacion" --inputbox "Se recomienda solo minusculas, sin espacios y corto" 10 60 2> $tf3
 		retv=$?
 		nap=$(cat $tf3)
 		[ $retv -eq 1 -o $retv -eq 255 ] && exit
+	} else {
+		nap=$nompr
+	} fi;	
 
-		django-admin.py startproject --template https://github.com/vtamara/django-base-template/zipball/master --extension py,md,rst $nap
+	django-admin.py startproject --template https://github.com/vtamara/plantilla-django/zipball/master --extension py,md,rst $nap
 
-		cd $nap
-		sudo pip install -r requirements/local.txt
-		cp $nap/settings/local-dist.py $nap/settings/local.py
-		python manage.py syncdb
-		python manage.py migrate
-		python manage.py runserver
+	cd $nap
+	sudo pip install -r requirements/local.txt
+	cp $nap/settings/local-dist.py $nap/settings/local.py
+	python manage.py runserver
 
 
-		exit 1
+	exit 1
 
-		inicializa $par
+	inicializa $par
 #wsgi 443 $apv $miruta $mius $migr "/" $miruta/app/InterfacesContables/site_media/ $miruta/app/static/ $miruta/app/conf/apache
 #pipymensaje
 } fi;
