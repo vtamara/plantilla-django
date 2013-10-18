@@ -89,7 +89,7 @@ bin/prepdjango.sh y ejecutelo asi:
   ```
 con esto ingresará a una interfaz con menus que le pedirá el nombre del 
 proyecto y el motor de bases de datos por usar.
-![por-instalar](/static/img/por-instalar.png "Ejecución interactiva")
+![por-instalar]({{BASE_PATH}}/static/img/por-instalar.png "Ejecución interactiva")
 También puede ejecutarlo dando el nombre del proyecto como primer parámetro
 por ejemplo: 
 
