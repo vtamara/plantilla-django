@@ -8,51 +8,65 @@
 
     <!-- Le HTML5 shim, for IE6-8 support of HTML elements -->
     <!--[if lt IE 9]>
-      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
 
     <!-- Le styles -->
-    <link href="{{ ASSET_PATH }}/css/1.4.0/bootstrap.css" rel="stylesheet">
+    <link href="{{ ASSET_PATH }}/bootstrap/css/bootstrap.min.css" rel="stylesheet">
     <link href="{{ ASSET_PATH }}/css/style.css?body=1" rel="stylesheet" type="text/css" media="all">
+    <link href="{{ ASSET_PATH }}/font-awesome/css/font-awesome.css" rel="stylesheet" type="text/css" media="all">
 
     <!-- Le fav and touch icons -->
-  <!-- Update these with your own images
+    <!-- Update these with your own images
     <link rel="shortcut icon" href="images/favicon.ico">
     <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
     <link rel="apple-touch-icon" sizes="72x72" href="images/apple-touch-icon-72x72.png">
     <link rel="apple-touch-icon" sizes="114x114" href="images/apple-touch-icon-114x114.png">
-  -->
+    -->
   </head>
 
-  <body>
+  <body class="bs-docs-home" style="" data-twttr-rendered="true">
 
-    <div class="topbar">
-      <div class="fill">
-        <div class="container">
-          <a class="brand" href="{{ HOME_PATH }}">{{ site.title }}</a>
-          <ul class="nav">
-            {% assign pages_list = site.pages %}
-            {% assign group = 'navigation' %}
-            {% include JB/pages_list %}
-          </ul>
-        </div>
-      </div>
-    </div>
-
+    <header class="navbar navbar-inverse navbar-fixed-top bs-docs-nav hidden-print" role="banner">
     <div class="container">
-
-      <div class="content">
-        {{ content }}
+      <div class="navbar-header">
+        <button class="navbar-toggle" type="button" data-toggle="collapse" data-target=".bs-navbar-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="{{BASE_PATH}}/"><i class="icon-filter"></i> plantilla-django</a>
       </div>
+      <nav class="nav-collapse bs-navbar-collapse" role="navigation">
+      <ul class="nav navbar-nav">
+        <li>
+        <a href="{{BASE_PATH}}/Plantilla/">Uso</a>
+        </li>
+        <li>
+        <a href="{{BASE_PATH}}/Estandares">Estándares</a>
+        </li>
+      </ul>
+      </nav>
+    </div>
+    </header>
 
-      <footer>
-        <p>{{ site.author.name }} 2013 
-          with help from <a href="http://jekyllbootstrap.com" target="_blank" title="The Definitive Jekyll Blogging Framework">Jekyll Bootstrap</a>
-          and <a href="http://twitter.github.com/bootstrap/" target="_blank">Twitter Bootstrap</a>
-        </p>
-      </footer>
+    <main class="bs-masthead" id="content" role="main">
+    <p></p>
+    <div class="container">
+      {{ content }}
+    </div><!-- /container -->
+    </main> 
 
-    </div> <!-- /container -->
+    <footer class="footer hidden-print">
+    <div class="container text-center">
+      <p>
+      Agradecimientos a <a href="http://jekyllbootstrap.com" target="_blank" title="The Definitive Jekyll Blogging Framework">Jekyll Bootstrap</a>,
+      <a href="http://twitter.github.com/bootstrap/" target="_blank">Twitter Bootstrap</a> y 
+      <a href="http://www.sofhouse.net">Sofhouse</a><br/>
+      {{ site.author.email}} 2013.  Dominio Público de acuerdo a legislación Colombiana.
+      </p>
+    </div>
+    </footer>
 
     {% include JB/analytics %}
   </body>

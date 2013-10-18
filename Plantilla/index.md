@@ -1,12 +1,10 @@
 ---
 layout: page
-title: "Plantilla"
+title: "Plantilla para proyectos con Django"
 description: ""
 ---
 
 {% include JB/setup %}
-
-# Plantilla de proyectos para Django 1.5 
 
 ## Acerca de ##
 
