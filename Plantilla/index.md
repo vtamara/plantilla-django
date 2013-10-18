@@ -1,43 +1,42 @@
 ---
 layout: page
-title: "Plantilla para proyectos con Django"
-description: ""
+title: "Plantilla de proyectos Django"
+description: "Como usar plantilla-django"
 ---
 
 {% include JB/setup %}
 
+plantilla-django us una plantilla de proyectos para iniciar nuevos proyectos 
+en Django.  Está disponible en
+[github](https://github.com/vtamara/plantilla-django)
+
 ## Acerca de ##
 
-Esta plantilla de proyectos es traducción a español y adaptación de la
-plantilla Xenith (licencia BSD):
 
-https://github.com/xenith/django-base-template
+plantilla-django es adaptación de la plantilla [Xenith](https://github.com/xenith/django-base-template), que además incluye:
 
-Con financiación de Sofhouse también incluimos (dominio público):
-* En directorio bin archivos de comandos que facilitan iniciar proyectos 
+- Archivo de comandos que facilita instalar Django,  iniciar proyectos 
   nuevos con esta plantilla y desplegar proyectos existentes en nuevos 
   servidores.
-* Estándares de programación en docs/estandares.md
+- En la rama gh-pages esta documentación y estándares de desarrollo
 
-La plantilla Xenith es para Django 1.5 y se basa especialmente 
-en [Mozilla Playdoh][playdoh] y [Two Scoops of Django][twoscoops].
-
-Según el autor de la plantilla Xenith todo el código está actualizado
-para usarse con la nueva organización de directorios y funcionalidad 
-de Django 1.5
+La plantilla Xenith toma ideas de [Mozilla Playdoh][playdoh] 
+y [Two Scoops of Django][twoscoops], pero todo el código está actualizado 
+para usarse con la nueva organización de directorios y funcionalidad de 
+Django 1.5
 
 [playdoh]: https://github.com/mozilla/playdoh
 [twoscoops]: https://github.com/twoscoops/django-twoscoops-project
 
 ## Características ##
 
-Por defecto, esta plantilla de proyectos incluye:
+Incluye:
 
-Un conjunto de plantillas básicas construidas con HTML5Boilerplate 4.1.0 y
-Twitter Bootstrap 2.3.1 (localizadas en la aplicación base).
 
-Plantillas:
+Entornos HTML,  CSS y plantillas:
 
+- HTML5Boilerplate 4.1.0 
+- Twitter Bootstrap 2.3.1 
 - Markdown
 - django_compressor para comprimir javascript/css/less/sass
 
@@ -68,23 +67,52 @@ Pruebas:
 - nose y django-nose
 - pylint, pep8, y coverage
 
+Archivos de comandos:
+
+- bin/prepdjango.sh para:
+  - instalar Apache, python, pip, django, virtualenv, virtualenvwrapper y motor de 
+    base de datos en su sistema
+  - para iniciar proyectos y 
+  - para desplegar proyectos en nuevos servidores.
+
 Cualquiera de estas opciones puede añadirse, modificarse o eliminarse 
 como lo prefiera tras crear su proyecto.
 
-## Como emplear esta plantilla de proyectos para crear su proyecto ##
+## Uso ##
 
-- Create your working environment and virtualenv
-- Install Django 1.5 ($ pip install Django>=1.5)
-- $ django-admin.py startproject --template https://github.com/xenith/django-base-template/zipball/master --extension py,md,rst projectname
-- $ cd projectname
-- Uncomment your preferred database adapter in requirements/compiled.txt (MySQL, Postgresql, or skip this step to stick with SQLite)
-- $ pip install -r requirements/local.txt
-- $ cp projectname/settings/local-dist.py projectname/settings/local.py
-- $ python manage.py syncdb
-- $ python manage.py migrate
-- $ python manage.py runserver
+Desde un Ubuntu 12.04 descargue de la plantilla el archivo de comandos 
+bin/prepdjango.sh y ejecutelo asi:
 
-That's all you need to do to get the project ready for development. When you deploy your project into production, you should look into getting certain settings from environment variables or other external sources. (See SECRET_KEY for an example.)
+  ```sh
+  chmod +x ./prepdjango.sh
+  ./prepdjango.sh
+  ```
+con esto ingresará a una interfaz con menus que le pedirá el nombre del 
+proyecto y el motor de bases de datos por usar.
+![por-instalar](/static/img/por-instalar.png "Ejecución interactiva")
+También puede ejecutarlo dando el nombre del proyecto como primer parámetro
+por ejemplo: 
+
+  ```sh
+  ./prepdjango.sh miap
+  ```
+
+O puede especificar como segundo parámetro el motor de bases de datos por usar (los posibles son sqlite y oracle): 
+
+  ```sh
+  ./prepdjango.sh miap oracle
+  ```
+
+Después de esto se iniciará el servidor de prueba que podrá examinar en [http://localhost:8000](http://localhost:8000)
+
+Es importante que lo detenga y configure aspectos generales y comunes
+a servidores de desarrollo y de despliegue en proyecto/settings/base.py 
+y las particularidades de la instalación que hace en 
+proyecto/settings/local.py (el cual no se incluye en el control de
+versiones, pero se copia de local-dist.py que si se incluye).
+
+En sitios de producción asegurese también de establecer SECRET_KEY 
+en proyecot/settings/local.py diferente al de proyecto/settings/local-dist.py
 
 There isn't a need to add settings/local.py to your source control, but there are multiple schools of thought on this. The method I use here is an example where each developer has their own settings/local.py with machine-specific settings. You will also need to create a version of settings/local.py for use in deployment that you will put into place with your deployment system (Fabric, chef, puppet, etc).
 
