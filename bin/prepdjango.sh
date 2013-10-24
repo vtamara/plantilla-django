@@ -22,23 +22,33 @@ tf3=/tmp/dialog_3_$$
 # Verifica parametros y entorno e inicializa variables 
 
 
-# Instala un RPM ubicado en /tmp/ via alien, por ejemplo para instalar /tmp/oracle-instantclient11.2-basic-11.2.0.4.0-1.x86_64.rpm usar:
+# Instala un RPM ubicado en /tmp/ de requerirse via alien, por ejemplo para instalar /tmp/oracle-instantclient11.2-basic-11.2.0.4.0-1.x86_64.rpm usar:
 # insrpm "RPM de Oracle InstantClient Basic" oracle-instantclient11.2-basic "-11.02.04.x86_64";
 function insrpm {
 	nom=$1;
-	deb=$2;
+	paq=$2;
 	vl=$3
-	apt-cache policy ${deb} | grep "Installed" > /dev/null 2>&1
-	if (test "$?" != "0") then {
-		rpm=$3;
+	if (test -x /usr/bin/apt-cache) then {
+		apt-cache policy ${paq} | grep "Installed" > /dev/null 2>&1
+		r=$1
+	} elif (test -x /usr/bin/yum) then {
+		yum list installed ${paq} > /dev/null 2>&1
+		r=$1
+	} fi;
+	if (test "$r" != "0") then {
+		rpm=$4;
 		if (test "$rpm" = "") then {
-			rpm="$deb${vl}.rpm";
+			rpm="$paq${vl}.rpm";
 		} fi;
 		if (test ! -f "/tmp/$rpm") then {
 			echo "Descargue en /tmp RPM de $nom ($rpm)";
 			exit 1;
 		} else {
-			sudo alien -i /tmp/$rpm
+			if (test /usr/bin/alien) then {
+				sudo alien -i /tmp/$rpm
+			} else {
+				sudo rpm -i /tmp/$rpm
+			} fi;
 		} fi;
 	} fi;
 }
@@ -52,21 +62,43 @@ function verificaoracle {
 	} fi;
 }
 
+# Instala dialog y paquetes requeridos por este archivo de comandos
+function prepdialog {
+	if (test -x /usr/bin/apt-get) then {
+		sudo apt-get install dialog
+	} elif (test -x /usr/bin/yum) then {
+		sudo yum -y install dialog
+	} fi;
+}
+
 # Instala lo basico de Python y Django
 function instalapythondjango {
-	sudo apt-get install python-dev python-setuptools python-imaging \
+	if (test -x /usr/bin/apt-get) then {
+		sudo apt-get install python-dev python-setuptools \
+		python-imaging \
 		python-m2crypto make sqlite3 alien libaio1 libmemcached-dev \
 		apache2 apache2.2-common apache2-mpm-prefork apache2-utils \
 		libexpat1 ssl-cert libapache2-mod-wsgi;
+	} elif (test -x /usr/bin/yum) then {
+		sudo yum -y install python 
+		sudo yum -y install python-devel
+		sudo yum -y install python-setuptools
+		sudo yum -y install python-setuptools-devel
+	} fi;
 
 	sudo easy_install virtualenv;
 	sudo easy_install pip;
 	sudo pip install virtualenvwrapper;
 	sudo pip install Django
-	
-	grep WORKON_HOME ~/.bashrc > /dev/null 2>&1
+
+	if (test -f ~/.bashrc) then {
+		confsh=".bashrc";
+	} elif (test -f ~/.profile) then { 
+		confsh=".profile";
+	} fi;	
+	grep WORKON_HOME ~/$confsh > /dev/null 2>&1
 	if (test "$?" != "0") then {
-		cat >> ~/.bashrc <<EOF
+		cat >> ~/$confsh <<EOF
 export PATH=\$PATH:/usr/local/bin
 export WORKON_HOME=\$HOME/.virtualenvs
 export PIP_VIRTUALENV_BASE=\$WORKON_HOME
@@ -83,7 +115,11 @@ EOF
 # Instala Oracle instant Client y prepara para usar desde django
 # Basado en http://marcelozambranav.blogspot.com/2012/08/how-to-install-oracle-sql-plus-on.html
 function instalaoracle {
-	r=`apt-cache search "oracle-instantclient.*basic" 2> /dev/null`;
+	if (test -x /usr/bin/apt-cache) then {
+		r=`apt-cache search "oracle-instantclient.*basic" 2> /dev/null`;
+	} elif (test -x /usr/bin/yum) then {
+		r=`yum list installed "oracle-instantclient.*basic" | grep -a1 "installed" | tail -n 1 2> /dev/null`;
+	} fi;
 	if (test "$r" != "") then {
 		# Version corta de Oracle InstantClient
 		voib=`echo $r | sed -e "s/.*instantclient//g;s/-basic.*//g"`;
@@ -92,12 +128,12 @@ function instalaoracle {
 		echo "Versión de Oracle InstantClient Basic instalada : $voib - ($voibl)";
 	}  fi;
 	if (test ! -f /tmp/oracle-instantclient*-basic-*x86_64.rpm) then {
-		echo "Descargue en /tmp la versión más reciente del RPM de Oracle InstantClient Basic de http://download.oracle.com/otn/linux/instantclient/"
+		echo "Descargue en /tmp la versión 11.2 más reciente de Oracle InstantClient Basic.  Se esperan  oracle-instantclient11.2-basic,  oracle-instantclient11.2-sqlplus, oracle-instantclient11.2-tools, oracle-instantclient11.2-devel"
 		exit 1;
 	} else {
 		nvoib=`ls /tmp/oracle-instantclient*-basic-*x86_64.rpm | head -n 1 | sed -e "s/.*instantclient//g;s/-basic.*//g"`;
 		if (test "$voib" != "" -a "$voib" != "$nvoib") then {
-			echo "Versión instalada y versión descargada de Oracle InstantClient Basic diferentes";
+			echo "Versión instalada ($voib) y versión descargada ($nvoib) de Oracle InstantClient Basic diferentes";
 			exit 1;
 		} fi;
 		voib=$nvoib;
@@ -316,7 +352,7 @@ function pipymensaje {
 if (test "$op1" != "lib") then {
 	nompr=$op1
 	motorbd=$op2
-	sudo apt-get install dialog
+	prepdialog
 	if (test "$nompr" = "") then {
 		dialog --title "Ayuda a iniciar proyecto con Django" --msgbox "Por instalar Apache, Python, Django, virtualenv, pip y virtualenvwrapper" 10 60
 	} else {
@@ -363,6 +399,7 @@ if (test "$op1" != "lib") then {
 	cd $nap
 	sudo pip install -r requirements/local.txt
 	cp $nap/settings/local-dist.py $nap/settings/local.py
+	chmod +x ./manage.py
 	python manage.py runserver
 
 
