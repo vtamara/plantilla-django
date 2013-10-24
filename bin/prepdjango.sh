@@ -44,7 +44,7 @@ function insrpm {
 			echo "Descargue en /tmp RPM de $nom ($rpm)";
 			exit 1;
 		} else {
-			if (test /usr/bin/alien) then {
+			if (test -x /usr/bin/alien) then {
 				sudo alien -i /tmp/$rpm
 			} else {
 				sudo rpm -i /tmp/$rpm
@@ -84,6 +84,11 @@ function instalapythondjango {
 		sudo yum -y install python-devel
 		sudo yum -y install python-setuptools
 		sudo yum -y install python-setuptools-devel
+		sudo yum -y install httpd
+		sudo yum -y install mod_wsgi
+		sudo chkconfig --levels 235 httpd on
+		sudo yum -y install php
+		sudo /etc/init.d/httpd start
 	} fi;
 
 	sudo easy_install virtualenv;
@@ -179,15 +184,17 @@ function inicializa {
 	# Ruta de Apache
 	apv=$2
 	if (test "$apv" = "") then {
-		if (test "$puerto" != "443") then {
-			apv="/etc/apache2/sites-available/wsgi"
-		} else {
-			apv="/etc/apache2/sites-available/default-ssl"
+		if (test -d "/etc/apache2/sites-available/") then {
+			if (test "$puerto" != "443") then {
+				apv="/etc/apache2/sites-available/wsgi"
+			} else {
+				apv="/etc/apache2/sites-available/default-ssl"
+			} fi;
+		} elif (test -f "/etc/httpd/conf/httpd.conf") then {
+			apv="/etc/httpd/conf/httpd.conf"
 		} fi;
-		echo "[ENTER] para continuar"
-		read
 	} fi;
-	if (test ! -f "bin/prepara.sh") then {
+	if (test ! -f "bin/prepdjango.sh") then {
 		echo "Este script debe ejecutarse desde el directorio base con fuentes";
 		exit 1;
 	} fi;
@@ -226,19 +233,55 @@ function wsgi {
 		exit 1;
 	} fi;
 	if (test ! -f "$apv") then {
-		echo "Problema con $apv";
+		echo "Problema con apv=$apv";
 		exit 1;
 	} fi;
-
+	if (test ! -d "$miruta") then {
+		echo "Problema con ruta $miruta";
+		exit 1;
+	} fi;
+	if (test "$mius" = "") then {
+		echo "Problema con usuario $mius";
+		exit 1;
+	} fi;
+	if (test "$migr" = "") then {
+		echo "Problema con usuario $migr";
+		exit 1;
+	} fi;
+	if (test "$rutaweb" = "") then {
+		echo "Problema con rutaweb $rutaweb";
+		exit 1;
+	} fi;
+	if (test ! -d "$sitemedia") then {
+		echo "Problema con sitemedia $sitemedia";
+		exit 1;
+	} fi;
+	if (test ! -d "$static") then {
+		echo "Problema con sitemedia $static";
+		exit 1;
+	} fi;
+	if (test ! -f "$appconfapache") then {
+		echo "Problema con appconfapache $appconfapache";
+		exit 1;
+	} fi;
+	ppython="/usr/lib/python2.7/site-packages"
+	if (test ! -d "$ppython") then {
+		ppython="/usr/lib/python2.6/site-packages"
+	} fi;
+	if (test ! -d "$ppython") then {
+		echo "No se conoce site-packages de python";
+		exit 1;
+	} fi;
+	dappconfapache=`dirname $appconfapache`;
 	ccom="
 	Alias /site_media/ $sitemedia
         Alias /static/ $static
 
         LogLevel warn
 
-        WSGIDaemonProcess DOMAIN user=$mius group=$migr processes=1 threads=15 maximum-requests=10000 python-path=/usr/lib/python2.7/site-packages
+        WSGIDaemonProcess DOMAIN user=$mius group=$migr processes=1 threads=15 maximum-requests=10000 python-path=$ppython
         WSGIProcessGroup DOMAIN
-        WSGIScriptAlias $rutaweb $appconfapache/django.wsgi
+        WSGIScriptAlias $rutaweb $
 
         <Directory $sitemedia>
                 Order deny,allow
@@ -246,7 +289,7 @@ function wsgi {
                 Options -Indexes FollowSymLinks
         </Directory>
 
-        <Directory $appconfapache>
+        <Directory $dappconfapache>
                 Order deny,allow
                 Allow from all
         </Directory>
@@ -254,7 +297,7 @@ function wsgi {
 
 	grep "WSGIScriptAlias $rutaweb" $apv > /dev/null 2>&1
 	if (test "$?" != "0") then {
-		if (test "$puerto" = "443") then {
+		if (test "$puerto" = "443" -a "$apv" = "/etc/apache2/sites-available/default-ssl") then {
 			sudo ed $apv << EOF
 /\/VirtualHost>
 i
@@ -263,10 +306,7 @@ $ccom
 w
 q
 EOF
-		} fi;
-	} else {
-		grep "WSGIScriptAlias /" $apv > /dev/null 2>&1
-		if (test "$?" != "0") then {
+		} else {
 			sudo ed $apv << EOF
 /\/VirtualHost>
 a
@@ -325,17 +365,16 @@ EOF
 			sudo ed $apv << EOF
 /\/VirtualHost>
 a
-        WSGIPythonPath /usr/lib/python2.7/site-packages/
+        WSGIPythonPath $ppython
 .
 w
 q
 EOF
 	} fi;
-
 	sudo service apache2 restart;
 }
 
-function pipymensaje { 
+function pipmensaje { 
 	(cd app/InterfacesContables; sudo make pip);
 	echo "-------------------";
 	echo "Paquetes instalados en sistema y Apache configurado con WSGI y reiniciado.";
@@ -349,7 +388,30 @@ function pipymensaje {
 }
 
 
-if (test "$op1" != "lib") then {
+if (test "$op1" = "desp" -o -f "manage.py") then {
+## DESPLIEGUE CON APACHE Y WSGI
+	prepdialog
+	nomp=`grep DJANGO_SETTINGS_MODULE manage.py | sed -e "s/.*, \"//g;s/.settings\")//g;s/{{ //g;s/ }}//g"`
+	if (test "$nomp" = "") then {
+		echo "No pudo determinarse nombre de proyecto en manage.py";
+		exit 1;
+	} fi;
+	if (test "$op2" = "") then {
+		dialog --title "Desplegar $nomp sobre Apache con WSGI" --inputbox "Puerto en el que operará (recomendado 443)" 10 60 443 2> $tf3
+		retv=$?
+		puerto=$(cat $tf3)
+		[ $retv -eq 1 -o $retv -eq 255 ] && exit
+
+	} else {
+		puerto="$op2"
+	} fi;
+	inicializa $puerto
+
+	wsgi $puerto $apv $miruta $mius $migr "/" $miruta/$nomp/site_media/ $miruta/$nomp/static/ $miruta/$nomp/wsgi.py
+	#wsgi $puerto $apv $miruta $mius $migr "/" $miruta/app/InterfacesContables/site_media/ $miruta/app/static/ $miruta/conf/apache/django.py
+	pipmensaje
+} elif (test "$op1" != "lib") then {
+## PREPARA ENTORNO DE DESARROLLO
 	nompr=$op1
 	motorbd=$op2
 	prepdialog
@@ -403,10 +465,5 @@ if (test "$op1" != "lib") then {
 	python manage.py runserver
 
 
-	exit 1
-
-	inicializa $par
-#wsgi 443 $apv $miruta $mius $migr "/" $miruta/app/InterfacesContables/site_media/ $miruta/app/static/ $miruta/app/conf/apache
-#pipymensaje
 } fi;
 

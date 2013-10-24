@@ -20,6 +20,7 @@ import os
 
 
 PROJECT_ROOT = os.path.abspath(os.path.dirname(__file__) + "../../")
+root_path = PROJECT_ROOT
 
 # Add the virtualenv packages to the site directory. This uses the technique
 # described at http://code.google.com/p/modwsgi/wiki/VirtualEnvironments
