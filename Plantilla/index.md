@@ -13,7 +13,8 @@ en Django.  Está disponible en
 ## Acerca de ##
 
 
-plantilla-django es adaptación de la plantilla [Xenith](https://github.com/xenith/django-base-template), que además incluye:
+plantilla-django es adaptación de la plantilla [Xenith](https://github.com/xenith/django-base-template), 
+que además incluye:
 
 - Archivo de comandos que facilita instalar Django,  iniciar proyectos 
   nuevos con esta plantilla y desplegar proyectos existentes en nuevos 
@@ -80,11 +81,12 @@ como lo prefiera tras crear su proyecto.
 
 ## Uso ##
 
-Hemos adaptado el archivo de comados y la plantilla para que pueda comenzar a usarse sin cambios en los siguientes sistemas:
+Hemos adaptado el archivo de comados y la plantilla para que pueda comenzar a usarse sin cambios en los
+siguientes sistemas:
 * Ubuntu Server 12.04
 * CentOS 6.2 con SELinux habilitado
 
-# Iniciar un proyecto #
+### Iniciar un proyecto ###
  
 Descargue de la plantilla el archivo de comandos bin/prepdjango.sh (digamos en /tmp/) y ejecutelo
 desde el directorio donde iniciará la aplicación (por ejemplo /var/www) asi:
@@ -100,25 +102,18 @@ proyecto y el motor de bases de datos por usar.
 ![por-instalar]({{BASE_PATH}}/static/img/por-instalar.png "Ejecución interactiva")
 
 <table>
-  <tr>
-    <td>
+  <tr><td>
 También puede ejecutarlo dando el nombre del proyecto como primer parámetro
-por ejemplo: 
-
-  ```sh
-  /tmp/prepdjango.sh miap
-  ```
-
-O puede especificar como segundo parámetro el motor de bases de datos por usar (los posibles son sqlite y oracle): 
-
-  ```sh
-  /tmp/prepdjango.sh miap oracle
-  ```
-  </td>
- </tr>
+por ejemplo: ```/tmp/prepdjango.sh miap```
+  </td></tr>
+  <tr><td>
+O puede especificar como segundo parámetro el motor de bases de datos por usar (los posibles son sqlite 
+y oracle):   ```sh /tmp/prepdjango.sh miap oracle```
+ </td></tr>
 </table>
 
-Después de esto se iniciará el servidor de prueba que podrá examinar en [http://localhost:8000](http://localhost:8000).
+Después de esto se iniciará el servidor de prueba que podrá examinar en
+[http://localhost:8000](http://localhost:8000).
 Al examinar comprobará que se usa bootstrap como entorno CSS.
 
 A continuación detenga el servidor de prueba (con Control-C) y configure aspectos generales y comunes
@@ -133,7 +128,7 @@ Incluya todos los archivos excepto miap/settings/local.py (aunque si es recomend
 incluya miap/settings/local-dist.py con valores por defecto).
 
 
-# Desplegar un proyecto ya desarrollado con Apache y WSGI #
+### Desplegar un proyecto ya desarrollado con Apache y WSGI ###
 
 Desde el directorio base de su proyecto ejecute:
 
@@ -141,4 +136,5 @@ Desde el directorio base de su proyecto ejecute:
   bin/prepdjango.sh
   ```
 
-Esto configurará Apache para que emplee WSGI para ingresar a su aplicación desde el URL / en el puerto que especifique.
+Esto configurará Apache para que emplee WSGI para ingresar a su aplicación desde el URL / en el puerto que
+especifique.
