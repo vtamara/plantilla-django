@@ -103,16 +103,10 @@ con Apache y WSGI. A continuación este archivo de comandos le pedirá el nombre
 proyecto y el motor de bases de datos por usar.
 ![por-instalar]({{BASE_PATH}}/static/img/por-instalar.png "Ejecución interactiva")
 
-<table>
-  <tr><td>
-También puede ejecutarlo dando el nombre del proyecto como primer parámetro
-por ejemplo: /tmp/prepdjango.sh miap
-  </td></tr>
-  <tr><td>
-O puede especificar como segundo parámetro el motor de bases de datos por usar (los posibles son sqlite 
-y oracle): sh /tmp/prepdjango.sh miap oracle
- </td></tr>
-</table>
+> También puede ejecutarlo dando el nombre del proyecto como primer parámetro
+> por ejemplo: `/tmp/prepdjango.sh miap`
+> O puede especificar como segundo parámetro el motor de bases de datos por usar (los posibles son sqlite 
+> y oracle):  `/tmp/prepdjango.sh miap oracle`
 
 Después de esto se iniciará el servidor de prueba que podrá examinar en
 [http://localhost:8000](http://localhost:8000).
@@ -122,12 +116,11 @@ A continuación detenga el servidor de prueba (con Control-C) y configure aspect
 a servidores de desarrollo y de despliegue en miap/settings/base.py 
 y las particularidades de la instalación que hace en miap/settings/local.py
 
-En sitios de producción asegurese también de establecer SECRET_KEY 
-en miap/settings/local.py diferente al de miap/settings/local-dist.py
-
-A continuación recomendamos que suba su nuevo proyecto a un sistema de control de versiones como git.  
+Recomendamos que suba su nuevo proyecto a un sistema de control de versiones como git.  
 Incluya todos los archivos excepto miap/settings/local.py (aunque si es recomendable que 
 incluya miap/settings/local-dist.py con valores por defecto).
+
+Configure la base de datos en miap/settings/base.py dejando claves en 
 
 
 ### Desplegar un proyecto ya desarrollado con Apache y WSGI ###
@@ -140,3 +133,6 @@ Desde el directorio base de su proyecto ejecute:
 
 Esto configurará Apache para que emplee WSGI para ingresar a su aplicación desde el URL / en el puerto que
 especifique.
+
+En cada sitio de producción establezca SECRET_KEY 
+de miap/settings/local.py diferente al de miap/settings/local-dist.py
