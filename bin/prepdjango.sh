@@ -473,7 +473,7 @@ if (test "$op1" = "desp" -o -f "manage.py") then {
 	dialog --title "Entorno Instalado" --msgbox "Desarrolle con:
 . ~/.bashrc
 mkvirtualenv p --system-site-packages
-workon p
+workon $nap
 cd $nap
 make pip
 
