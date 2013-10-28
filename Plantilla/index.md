@@ -6,6 +6,12 @@ description: "Como usar plantilla-django"
 
 {% include JB/setup %}
 
+| Tables        | Are           | Cool  |
+| ------------- |:-------------:| -----:|
+| col 3 is      | right-aligned | $1600 |
+| col 2 is      | centered      |   $12 |
+| zebra stripes | are neat      |    $1 |
+
 plantilla-django us una plantilla de proyectos para iniciar nuevos proyectos 
 en Django.  Está disponible en
 [github](https://github.com/vtamara/plantilla-django)
