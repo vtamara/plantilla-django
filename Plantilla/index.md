@@ -20,14 +20,16 @@ que además incluye:
   nuevos con esta plantilla y desplegar proyectos existentes en nuevos 
   servidores.
 - En la rama gh-pages esta documentación y estándares de desarrollo
+- Elementos de fuentes de proyectos Django como [P2PU][p2pu]
 
-La plantilla Xenith toma ideas de [Mozilla Playdoh][playdoh] 
+La plantilla Xenith a su vez toma ideas de [Mozilla Playdoh][playdoh] 
 y [Two Scoops of Django][twoscoops], pero todo el código está actualizado 
 para usarse con la nueva organización de directorios y funcionalidad de 
 Django 1.5
 
 [playdoh]: https://github.com/mozilla/playdoh
 [twoscoops]: https://github.com/twoscoops/django-twoscoops-project
+[p2pu]: https://github.com/p2pu/lernanta
 
 ## Características ##
 
