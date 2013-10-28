@@ -78,7 +78,7 @@ function instalapythondjango {
 		python-imaging \
 		python-m2crypto make sqlite3 alien libaio1 libmemcached-dev \
 		apache2 apache2.2-common apache2-mpm-prefork apache2-utils \
-		libexpat1 ssl-cert libapache2-mod-wsgi;
+		libexpat1 ssl-cert libapache2-mod-wsgi w3m;
 	} elif (test -x /usr/bin/yum) then {
 		sudo yum -y install python 
 		sudo yum -y install python-devel
@@ -87,6 +87,7 @@ function instalapythondjango {
 		sudo yum -y install httpd
 		sudo yum -y install mod_wsgi
 		sudo yum -y install policycoreutils-python
+		sudo yum -y install w3m
 		sudo chkconfig --levels 235 httpd on
 		sudo yum -y install php
 		sudo /etc/init.d/httpd start
@@ -381,6 +382,16 @@ w
 q
 EOF
 	} fi;
+	if (test -x /usr/sbin/sestatus) then {
+			sudo ed $apv << EOF
+/WSGIPythonPath
+a
+	WSGISocketPrefix /var/run/wsgi";
+.
+w
+q
+EOF
+	} fi;
 	if (test -f "/etc/init.d/httpd") then {
 		sudo service httpd stop
 		r=`sudo semanage port -l | grep -w "http_port_t" | grep " $puerto"`
@@ -420,7 +431,15 @@ if (test "$op1" = "desp" -o -f "manage.py") then {
 	#echo "Asegurese de habilitar el sitio de Apache (por ejemplo a2ensite default) y examinar";
 
 } elif (test "$op1" != "lib") then {
-## PREPARA ENTORNO DE DESARROLLO
+## PREPARA ENTORN
+	if (test -x /usr/sbin/sestatus) then {
+		r=`/usr/sbin/sestatus | grep "SELinux status:" | sed -e "s/.*: *//g"`
+		iv=`pwd | sed -e "s/\/var\/www.*/SI/g"`
+		if (test "$r" = "enabled" -a "$iv" != "SI") then {
+			echo "En sistemas con SELinux se recomienda instalar la aplicación dentro de /var/www";
+			exit 1;
+		} fi;
+	} fi;
 	nompr=$op1
 	motorbd=$op2
 	if (test "$nompr" = "") then {
