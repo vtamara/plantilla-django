@@ -86,6 +86,7 @@ function instalapythondjango {
 		sudo yum -y install python-setuptools-devel
 		sudo yum -y install httpd
 		sudo yum -y install mod_wsgi
+		sudo yum -y install policycoreutils-python
 		sudo chkconfig --levels 235 httpd on
 		sudo yum -y install php
 		sudo /etc/init.d/httpd start
@@ -100,7 +101,11 @@ function instalapythondjango {
 		confsh=".bashrc";
 	} elif (test -f ~/.profile) then { 
 		confsh=".profile";
-	} fi;	
+	} fi;
+	lv="/usr/local/bin/"
+	if (test ! -x $lv/virtualenvwrapper.sh) then {
+		lv="/usr/bin/"
+	} fi;
 	grep WORKON_HOME ~/$confsh > /dev/null 2>&1
 	if (test "$?" != "0") then {
 		cat >> ~/$confsh <<EOF
@@ -108,7 +113,7 @@ export PATH=\$PATH:/usr/local/bin
 export WORKON_HOME=\$HOME/.virtualenvs
 export PIP_VIRTUALENV_BASE=\$WORKON_HOME
 export PIP_RESPECT_VIRTUALENV=true
-source /usr/local/bin/virtualenvwrapper.sh
+source $lv/virtualenvwrapper.sh
 EOF
 		export WORKON_HOME=$HOME/.virtualenvs
 		export PIP_VIRTUALENV_BASE=$WORKON_HOME
@@ -225,7 +230,7 @@ function wsgi {
 	mius=$4
 	migr=$5
 	rutaweb=$6
-	sitemedia=$7
+	media=$7
 	static=$8
  	appconfapache=$9
 	if (test "$puerto" = "") then {
@@ -252,12 +257,12 @@ function wsgi {
 		echo "Problema con rutaweb $rutaweb";
 		exit 1;
 	} fi;
-	if (test ! -d "$sitemedia") then {
-		echo "Problema con sitemedia $sitemedia";
+	if (test ! -d "$media") then {
+		echo "Problema con media $media";
 		exit 1;
 	} fi;
 	if (test ! -d "$static") then {
-		echo "Problema con sitemedia $static";
+		echo "Problema con static $static";
 		exit 1;
 	} fi;
 	if (test ! -f "$appconfapache") then {
@@ -272,18 +277,23 @@ function wsgi {
 		echo "No se conoce site-packages de python";
 		exit 1;
 	} fi;
+	APACHE_LOG_DIR="/var/log/httpd";
+	if (test ! -d $APACHE_LOG_DIR) then {
+		APACHE_LOG_DIR="/var/log/apache2/";
+	} fi;
 	dappconfapache=`dirname $appconfapache`;
 	ccom="
-	Alias /site_media/ $sitemedia
+	Alias /site_media/ $media
+	Alias /media/ $media
         Alias /static/ $static
 
         LogLevel warn
 
         WSGIDaemonProcess DOMAIN user=$mius group=$migr processes=1 threads=15 maximum-requests=10000 python-path=$ppython
         WSGIProcessGroup DOMAIN
-        WSGIScriptAlias $rutaweb $
+        WSGIScriptAlias $rutaweb $appconfapache
 
-        <Directory $sitemedia>
+        <Directory $media>
                 Order deny,allow
                 Allow from all
                 Options -Indexes FollowSymLinks
@@ -334,13 +344,13 @@ Listen $puerto
                 Allow from all
         </Directory>
 
-        ErrorLog \${APACHE_LOG_DIR}/error.log
+        ErrorLog ${APACHE_LOG_DIR}/error.log
 
         # Possible values include: debug, info, notice, warn, error, crit,
         # alert, emerg.
         LogLevel warn
 
-        CustomLog \${APACHE_LOG_DIR}/access.log combined
+        CustomLog ${APACHE_LOG_DIR}/access.log combined
 
     Alias /doc/ "/usr/share/doc/"
     <Directory "/usr/share/doc/">
@@ -371,20 +381,17 @@ w
 q
 EOF
 	} fi;
-	sudo service apache2 restart;
-}
-
-function pipmensaje { 
-	(cd app/InterfacesContables; sudo make pip);
-	echo "-------------------";
-	echo "Paquetes instalados en sistema y Apache configurado con WSGI y reiniciado.";
-	echo "Asegurese de habilitar el sitio de Apache (por ejemplo a2ensite default) y examinar";
-	echo "Empiece a desarrollar con:";
-	echo "  . ~/.bashrc";
-	echo "  mkvirtualenv ic --system-site-packages";
-	echo "  workon ic";
-	echo "  cd app/InterfacesContables";
-	echo "  make pip";
+	if (test -f "/etc/init.d/httpd") then {
+		sudo service httpd stop
+		r=`sudo semanage port -l | grep -w "http_port_t" | grep " $puerto"`
+		if (test "$r" = "") then {
+			sudo semanage port -a -t http_port_t -p tcp $puerto
+		} fi;
+		sudo service httpd start;
+exit 1;
+	} else {
+		sudo service apache2 restart;
+	} fi;
 }
 
 
@@ -407,14 +414,15 @@ if (test "$op1" = "desp" -o -f "manage.py") then {
 	} fi;
 	inicializa $puerto
 
-	wsgi $puerto $apv $miruta $mius $migr "/" $miruta/$nomp/site_media/ $miruta/$nomp/static/ $miruta/$nomp/wsgi.py
+	wsgi $puerto $apv $miruta $mius $migr "/" $miruta/$nomp/media/ $miruta/$nomp/static/ $miruta/$nomp/wsgi.py
 	#wsgi $puerto $apv $miruta $mius $migr "/" $miruta/app/InterfacesContables/site_media/ $miruta/app/static/ $miruta/conf/apache/django.py
-	pipmensaje
+	dialog --title "Proyecto desplegado" --msgbox "Apache configurado con WSGI y reiniciado" 10 60
+	#echo "Asegurese de habilitar el sitio de Apache (por ejemplo a2ensite default) y examinar";
+
 } elif (test "$op1" != "lib") then {
 ## PREPARA ENTORNO DE DESARROLLO
 	nompr=$op1
 	motorbd=$op2
-	prepdialog
 	if (test "$nompr" = "") then {
 		dialog --title "Ayuda a iniciar proyecto con Django" --msgbox "Por instalar Apache, Python, Django, virtualenv, pip y virtualenvwrapper" 10 60
 	} else {
@@ -461,9 +469,16 @@ if (test "$op1" = "desp" -o -f "manage.py") then {
 	cd $nap
 	sudo pip install -r requirements/local.txt
 	cp $nap/settings/local-dist.py $nap/settings/local.py
-	chmod +x ./manage.py
+	chmod +x ./manage.py bin/prepdjango.sh
+	dialog --title "Entorno Instalado" --msgbox "Desarrolle con:
+. ~/.bashrc
+mkvirtualenv p --system-site-packages
+workon p
+cd $nap
+make pip
+
+Continue para iniciar servidor de desarrollo que puede
+examinar en http://127.0.0.1:8000" 15 60;
 	python manage.py runserver
-
-
 } fi;
 
