@@ -60,7 +60,7 @@ Colchones (Caching):
 Administración:
 
 - Incluye django-admin-toolbar para desarrollo y producción (habilitado para superusuarios)
-- Incluye django-debug-toolbar-user-panel, que es bien util, pero deshabilitado hasta que soporte bien Django 1.5
+- Incluye django-debug-toolbar-user-panel pero deshabilitado hasta que soporte bien Django 1.5
 
 Pruebas:
 
@@ -72,24 +72,30 @@ Archivos de comandos:
 - bin/prepdjango.sh para:
   - instalar Apache, python, pip, django, virtualenv, virtualenvwrapper y motor de 
     base de datos en su sistema
-  - para iniciar proyectos y 
-  - para desplegar proyectos en nuevos servidores.
+  - iniciar proyectos y 
+  - desplegar proyectos ya desarrollados en nuevos servidores.
 
 Cualquiera de estas opciones puede añadirse, modificarse o eliminarse 
 como lo prefiera tras crear su proyecto.
 
 ## Uso ##
 
-Desde un Ubuntu 12.04 descargue de la plantilla el archivo de comandos 
-bin/prepdjango.sh y ejecutelo asi:
+Hemos adaptado el archivo de comados y la plantilla para que pueda comenzar a usarse sin cambios en los siguientes sistemas:
+* Ubuntu Server 12.04
+* CentOS 6.2 con SELinux habilitado
+ 
+Descargue de la plantilla el archivo de comandos bin/prepdjango.sh (digamos en /tmp/) y ejecutelo
+desde el directorio donde iniciará la aplicación (por ejemplo /var/www) asi:
 
   ```sh
+  cd /var/www
   chmod +x ./prepdjango.sh
-  ./prepdjango.sh
+  /tmp/prepdjango.sh
   ```
-con esto ingresará a una interfaz con menus que le pedirá el nombre del 
+con esto ingresará a una interfaz con menús que le pedirá el nombre del 
 proyecto y el motor de bases de datos por usar.
 ![por-instalar]({{BASE_PATH}}/static/img/por-instalar.png "Ejecución interactiva")
+
 También puede ejecutarlo dando el nombre del proyecto como primer parámetro
 por ejemplo: 
 
@@ -103,18 +109,17 @@ O puede especificar como segundo parámetro el motor de bases de datos por usar 
   ./prepdjango.sh miap oracle
   ```
 
-Después de esto se iniciará el servidor de prueba que podrá examinar en [http://localhost:8000](http://localhost:8000)
+Después de esto se iniciará el servidor de prueba que podrá examinar en [http://localhost:8000](http://localhost:8000).
+Al examinar comprobará que se usa bootstrap como entorno CSS.
 
-Es importante que lo detenga y configure aspectos generales y comunes
-a servidores de desarrollo y de despliegue en proyecto/settings/base.py 
-y las particularidades de la instalación que hace en 
-proyecto/settings/local.py (el cual no se incluye en el control de
-versiones, pero se copia de local-dist.py que si se incluye).
+A continuación detanga el servidor de prueba (con Control-C) y configure aspectos generales y comunes
+a servidores de desarrollo y de despliegue en miap/settings/base.py 
+y las particularidades de la instalación que hace en miap/settings/local.py
 
 En sitios de producción asegurese también de establecer SECRET_KEY 
-en proyecot/settings/local.py diferente al de proyecto/settings/local-dist.py
+en miap/settings/local.py diferente al de miap/settings/local-dist.py
 
-There isn't a need to add settings/local.py to your source control, but there are multiple schools of thought on this. The method I use here is an example where each developer has their own settings/local.py with machine-specific settings. You will also need to create a version of settings/local.py for use in deployment that you will put into place with your deployment system (Fabric, chef, puppet, etc).
-
-The second school of thought is that all settings should be versioned, so that as much of the code/settings as possible is the same across all developers and test/production servers. If you prefer this method, then make sure *all* necessary settings are properly set in settings/base.py, and then edit settings/__init__.py so it no longer reraises the exception. (ie, by replacing 'raise' with 'pass'). As it is, settings/local.py should only be overriding settings from settings/base.py anyway. (You could also just set the DJANGO_SETTINGS_MODULE environment variable to "{{ project_name }}.settings.base" directly.)
+A continuación recomendamos que suba su nuevo proyecto a un sistema de control de versiones como git.  
+Incluya todos los archivos excepto miap/settings/local.py (aunque si es recomendable que 
+incluya miap/settings/local-dist.py con valores por defecto).
 
