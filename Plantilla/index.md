@@ -103,11 +103,11 @@ con Apache y WSGI. A continuación este archivo de comandos le pedirá el nombre
 proyecto y el motor de bases de datos por usar.
 ![por-instalar]({{BASE_PATH}}/static/img/por-instalar.png "Ejecución interactiva")
 
-> También puede ejecutarlo dando el nombre del proyecto como primer parámetro
-> por ejemplo: `/tmp/prepdjango.sh miap`
->
-> O puede especificar como segundo parámetro el motor de bases de datos por usar (los posibles son sqlite 
-> y oracle):  `/tmp/prepdjango.sh miap oracle`
+|También puede ejecutarlo dando el nombre del proyecto como primer parámetro|
+| por ejemplo: `/tmp/prepdjango.sh miap`|
+||
+| O puede especificar como segundo parámetro el motor de bases de datos por usar (los posibles son sqlite |
+| y oracle):  `/tmp/prepdjango.sh miap oracle`|
 
 Después de esto se iniciará el servidor de prueba que podrá examinar en
 [http://localhost:8000](http://localhost:8000).
