@@ -104,11 +104,11 @@ proyecto y el motor de bases de datos por usar.
 <table>
   <tr><td>
 También puede ejecutarlo dando el nombre del proyecto como primer parámetro
-por ejemplo: ```/tmp/prepdjango.sh miap```
+por ejemplo: /tmp/prepdjango.sh miap
   </td></tr>
   <tr><td>
 O puede especificar como segundo parámetro el motor de bases de datos por usar (los posibles son sqlite 
-y oracle):   ```sh /tmp/prepdjango.sh miap oracle```
+y oracle): sh /tmp/prepdjango.sh miap oracle
  </td></tr>
 </table>
 
