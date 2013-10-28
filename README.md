@@ -1,10 +1,10 @@
-
+{% if False %}
 <table>
   <tr>
     <td>Vea como emplear esta plantilla en http://vtamara.github.io/plantilla-django/</td>
   </tr>
 </table>
-
+{% endif %}
 # Proyecto {{ project_name|title }} #
 
 ## Acerca de ##
