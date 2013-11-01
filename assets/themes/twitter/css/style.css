@@ -1,4 +1,5 @@
 /* Override some defaults */
+
 html, body {
   background-color: #eee;
 }
@@ -74,4 +75,9 @@ footer {
 	border:1px solid #4C964D;
 	color:#FFF;
 }
-	
+blockquote p {
+    background-color: rgb(250,250,250);
+    font-size: 100%;
+    font-weight: 100;
+    line-height: 1;
+}

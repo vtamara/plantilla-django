@@ -158,3 +158,10 @@ ul.posts span {
 .post pre.terminal code {
   background-color: #333;
 }
+
+blockquote p {
+    font-size: 100%
+    font-weight: 300;
+    line-height: 1;
+    background-color: rgb(220,160,160);
+}

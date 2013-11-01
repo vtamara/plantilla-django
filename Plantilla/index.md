@@ -7,13 +7,14 @@ description: "Como usar plantilla-django"
 {% include JB/setup %}
 
 plantilla-django us una plantilla de proyectos para iniciar nuevos proyectos 
-en Django.  Está disponible en
+en Django.  Está disponible en 
 [github](https://github.com/vtamara/plantilla-django)
 
 ## Acerca de ##
 
 
-plantilla-django es adaptación de la plantilla [Xenith](https://github.com/xenith/django-base-template), 
+plantilla-django es adaptación de la plantilla 
+[Xenith](https://github.com/xenith/django-base-template), 
 que además incluye:
 
 - Archivo de comandos que facilita instalar Django,  iniciar proyectos 
@@ -62,19 +63,24 @@ Colchones (Caching):
 
 Administración:
 
-- Incluye django-admin-toolbar para desarrollo y producción (habilitado para superusuarios)
-- Incluye django-debug-toolbar-user-panel pero deshabilitado hasta que soporte bien Django 1.5
+- Incluye django-admin-toolbar para desarrollo y producción (habilitado 
+  para superusuarios)
+- Incluye django-debug-toolbar-user-panel pero deshabilitado hasta 
+  que soporte bien Django 1.5
 
 Pruebas:
 
 - nose y django-nose
 - pylint, pep8, y coverage
 
+Desarrollo:
+- vagrant 
+
 Archivos de comandos:
 
 - bin/prepdjango.sh para:
-  - instalar Apache, python, pip, django, virtualenv, virtualenvwrapper y motor de 
-    base de datos en su sistema
+  - instalar Apache, python, pip, django, virtualenv, virtualenvwrapper 
+    y motor de base de datos en su sistema
   - iniciar proyectos y 
   - desplegar proyectos ya desarrollados en nuevos servidores.
 
@@ -83,45 +89,60 @@ como lo prefiera tras crear su proyecto.
 
 ## Uso ##
 
-Hemos adaptado el archivo de comados y la plantilla para que pueda comenzar a usarse sin cambios en los
-siguientes sistemas:
-* Ubuntu Server 12.04
-* CentOS 6.2 con SELinux habilitado
+Hemos adaptado el archivo de comados y la plantilla para que pueda 
+comenzar a usarse sin cambios en los siguientes sistemas:
+
+- Ubuntu Server 12.04
+- CentOS 6.2 con SELinux habilitado
 
 ### Iniciar un proyecto ###
  
-Descargue de la plantilla el archivo de comandos bin/prepdjango.sh (digamos en /tmp/) y ejecutelo
-desde el directorio donde iniciará la aplicación (por ejemplo /var/www) asi:
+Descargue de la plantilla el archivo de comandos bin/prepdjango.sh 
+(digamos en /tmp/) y ejecutelo desde el directorio donde iniciará la 
+aplicación (por ejemplo /var/www) asi:
 
   ```sh
   cd /var/www
   chmod +x ./prepdjango.sh
   /tmp/prepdjango.sh
   ```
-al hacerlo se instalaran los paquetes para desarrollar con Django y posteriormente probar el despliegue
-con Apache y WSGI. A continuación este archivo de comandos le pedirá el nombre del 
-proyecto y el motor de bases de datos por usar.
+al hacerlo se instalaran los paquetes para desarrollar con Django y 
+posteriormente probar el despliegue con Apache y WSGI. A continuación 
+este archivo de comandos le pedirá el nombre del proyecto y el motor de 
+bases de datos por usar.  
+
 ![por-instalar]({{BASE_PATH}}/static/img/por-instalar.png "Ejecución interactiva")
 
 > También puede ejecutarlo dando el nombre del proyecto como primer parámetro
-> por ejemplo: `/tmp/prepdjango.sh miap`
->
-> O puede especificar como segundo parámetro el motor de bases de datos por usar (los posibles son sqlite
-> y oracle):  `/tmp/prepdjango.sh miap oracle`
+> por ejemplo: `/tmp/prepdjango.sh miap` 
+> 
+> O puede especificar como segundo parámetro el motor de bases de datos por 
+> usar (los posibles son sqlite y oracle):  `/tmp/prepdjango.sh miap oracle`
 
 Después de esto se iniciará el servidor de prueba que podrá examinar en
 [http://localhost:8000](http://localhost:8000).
-Al examinar comprobará que se usa bootstrap como entorno CSS.
+Al examinar comprobará que se usa bootstrap de Twitter como entorno CSS. 
+Lo recomendamos para desarrollar con más facilidad aplicaciones receptivas 
+(*responsive*), que se adaptan al dispositivos desde el cual se ven (e.g
+teléfonos inteligentes, tabletas).  Un proyecto django que emplea bootstrap 
+es P2PU, las fuentes de su entorno CSS están en 
+https://github.com/p2pu/p2pu-css-framework y la documentación 
+en http://p2pu.github.io/p2pu-css-framework/ 
 
-A continuación detenga el servidor de prueba (con Control-C) y configure aspectos generales y comunes
-a servidores de desarrollo y de despliegue en miap/settings/base.py 
-y las particularidades de la instalación que hace en miap/settings/local.py
+A continuación detenga el servidor de prueba (con Control-C) y configure 
+aspectos generales y comunes
+a servidores de desarrollo y de despliegue en `miap/settings/base.py`
+y las particularidades de la instalación que hace en `miap/settings/local.py`
+replicando cambios a ese archivo en `miap/settings/local.py`
 
-Recomendamos que suba su nuevo proyecto a un sistema de control de versiones como git.  
-Incluya todos los archivos excepto miap/settings/local.py (aunque si es recomendable que 
-incluya miap/settings/local-dist.py con valores por defecto).
+Recomendamos que suba su nuevo proyecto a un sistema de control de versiones 
+como git.  
+Incluya todos los archivos excepto `miap/settings/local.py` (pero
+incluya `miap/settings/local-dist.py` con valores por 
+defecto que guien cambios por aplicar a `miap/settings/local.py`).
 
-Configure la base de datos en miap/settings/base.py dejando claves en 
+Configure la base de datos en `miap/settings/base.py` dejando claves en 
+`miap/settings/local.py`.
 
 
 ### Desplegar un proyecto ya desarrollado con Apache y WSGI ###
@@ -132,8 +153,40 @@ Desde el directorio base de su proyecto ejecute:
   bin/prepdjango.sh
   ```
 
-Esto configurará Apache para que emplee WSGI para ingresar a su aplicación desde el URL / en el puerto que
-especifique.
+Esto configurará Apache para que emplee WSGI para ingresar a su aplicación 
+desde el URL / en el puerto que especifique.
 
 En cada sitio de producción establezca SECRET_KEY 
 de miap/settings/local.py diferente al de miap/settings/local-dist.py
+### Desarrollar con vagrant y virtualbox
+
+vagrant maneja máquinas virtuales desde la línea de comandos automatizando
+la creación de cajas (boxes) de desarrollo o donde podrá probar el despliegue.
+
+Desde el directorio de una aplicación inicie una máquina virtual de desarrollo
+con
+```vagrant up```
+puede monitorear abriendo virtualbox
+La primera vez se descargará una máquina virtual mínima.
+
+Una vez suba y esté preparada su máquina virtual, que redirecciona
+puertos así:
+- 80 al 8080 de su sistema
+- 8000 al 8001
+- 90 al 8090
+- 443 al 8443
+- 22 al 2222
+Puede ingresar a la caja  de desarrollo con:
+```vagrant ssh```
+
+En la caja el usuario vagrant tendrá un directorio project
+que es compartido con su directorio de trabajo --los cambios que haga en
+cualquiera de los dos se ven en el otro.
+
+Avance en el desarrollo y bien pruebe con el servidor web de django:
+./manage.py runserver
+Y examine en su computador en el puerto 8001 o bien despliegue con
+Apache y WSGI en el puerto 90 y examine en su computador en el puerto 8090
+o despliegue en el puerto 443 y examine en su computaodr en el puerto 8443.
+
+
