@@ -19,7 +19,10 @@ Vagrant::Config.run do |config|
     config.vm.box = "precise64"
     config.vm.box_url = "http://files.vagrantup.com/precise64.box"
 
-    config.vm.forward_port 8000, 8000
+    config.vm.forward_port 8000, 8001
+    config.vm.forward_port 80, 8080
+    config.vm.forward_port 90, 8090
+    config.vm.forward_port 443, 8443
 
     # Increase vagrant's patience during hang-y CentOS bootup
     # see: https://github.com/jedi4ever/veewee/issues/14
@@ -28,9 +31,9 @@ Vagrant::Config.run do |config|
 
     # nfs needs to be explicitly enabled to run.
     if CONF['nfs'] == false or RUBY_PLATFORM =~ /mswin(32|64)/
-        config.vm.share_folder("v-root", MOUNT_POINT, ".")
+        config.vm.share_folder("vagrant-root", MOUNT_POINT, ".")
     else
-        config.vm.share_folder("v-root", MOUNT_POINT, ".", :nfs => true)
+        config.vm.share_folder("vagrant-root", MOUNT_POINT, ".", :nfs => true)
     end
 
     # Add to /etc/hosts: 33.33.33.24 dev.example.com

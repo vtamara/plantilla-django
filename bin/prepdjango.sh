@@ -74,11 +74,14 @@ function prepdialog {
 # Instala lo basico de Python y Django
 function instalapythondjango {
 	if (test -x /usr/bin/apt-get) then {
+		if (test ! -d /etc/apache2/) then {
+			sudo apt-get update
+		} fi;
 		sudo apt-get install python-dev python-setuptools \
 		python-imaging \
 		python-m2crypto make sqlite3 alien libaio1 libmemcached-dev \
 		apache2 apache2.2-common apache2-mpm-prefork apache2-utils \
-		libexpat1 ssl-cert libapache2-mod-wsgi w3m;
+		libexpat1 ssl-cert libapache2-mod-wsgi w3m git rubygems screen;
 	} elif (test -x /usr/bin/yum) then {
 		sudo yum -y install python 
 		sudo yum -y install python-devel
@@ -89,7 +92,6 @@ function instalapythondjango {
 		sudo yum -y install policycoreutils-python
 		sudo yum -y install w3m
 		sudo chkconfig --levels 235 httpd on
-		sudo yum -y install php
 		sudo /etc/init.d/httpd start
 	} fi;
 
@@ -103,9 +105,9 @@ function instalapythondjango {
 	} elif (test -f ~/.profile) then { 
 		confsh=".profile";
 	} fi;
-	lv="/usr/local/bin/"
+	lv="/usr/local/bin"
 	if (test ! -x $lv/virtualenvwrapper.sh) then {
-		lv="/usr/bin/"
+		lv="/usr/bin"
 	} fi;
 	grep WORKON_HOME ~/$confsh > /dev/null 2>&1
 	if (test "$?" != "0") then {
@@ -121,6 +123,17 @@ EOF
 		export PIP_RESPECT_VIRTUALENV=true
 		source /usr/local/bin/virtualenvwrapper.sh
 	} fi;
+}
+
+
+# Instala  ependencias con pip, desde directorio con aplicacion
+# Si falta copia configuraci<E1>ión local
+function prepreq {
+       sudo pip install -r requirements/local.txt
+       if (test ! -f $nap/settings/local.py) then {
+               cp $nap/settings/local-dist.py $nap/settings/local.py
+       } fi;
+       chmod +x ./manage.py bin/prepdjango.sh
 }
 
 # Instala Oracle instant Client y prepara para usar desde django
@@ -190,10 +203,9 @@ function inicializa {
 	# Ruta de Apache
 	apv=$2
 	if (test "$apv" = "") then {
+		apv="/etc/apache2/sites-available/wsgi"
 		if (test -d "/etc/apache2/sites-available/") then {
-			if (test "$puerto" != "443") then {
-				apv="/etc/apache2/sites-available/wsgi"
-			} else {
+			if (test "$puerto" = "443") then {
 				apv="/etc/apache2/sites-available/default-ssl"
 			} fi;
 		} elif (test -f "/etc/httpd/conf/httpd.conf") then {
@@ -239,8 +251,7 @@ function wsgi {
 		exit 1;
 	} fi;
 	if (test ! -f "$apv") then {
-		echo "Problema con apv=$apv";
-		exit 1;
+		echo "Por crear $apv";
 	} fi;
 	if (test ! -d "$miruta") then {
 		echo "Problema con ruta $miruta";
@@ -272,10 +283,13 @@ function wsgi {
 	} fi;
 	ppython="/usr/lib/python2.7/site-packages"
 	if (test ! -d "$ppython") then {
+		ppython="/usr/lib/python2.7/dist-packages"
+	} fi;
+	if (test ! -d "$ppython") then {
 		ppython="/usr/lib/python2.6/site-packages"
 	} fi;
 	if (test ! -d "$ppython") then {
-		echo "No se conoce site-packages de python";
+		echo "No se conoce site-packages de python ($ppython)";
 		exit 1;
 	} fi;
 	APACHE_LOG_DIR="/var/log/httpd";
@@ -318,10 +332,7 @@ w
 q
 EOF
 		} else {
-			sudo ed $apv << EOF
-/\/VirtualHost>
-a
-Listen $puerto
+			vh="Listen $puerto
 <VirtualHost *:$puerto>
         ServerAdmin webmaster@localhost
 
@@ -338,7 +349,7 @@ Listen $puerto
         </Directory>
 
         ScriptAlias /cgi-bin/ /usr/lib/cgi-bin/
-        <Directory "/usr/lib/cgi-bin">
+        <Directory \"/usr/lib/cgi-bin\">
                 AllowOverride None
                 Options +ExecCGI -MultiViews +SymLinksIfOwnerMatch
                 Order allow,deny
@@ -353,8 +364,8 @@ Listen $puerto
 
         CustomLog ${APACHE_LOG_DIR}/access.log combined
 
-    Alias /doc/ "/usr/share/doc/"
-    <Directory "/usr/share/doc/">
+    Alias /doc/ \"/usr/share/doc/\"
+    <Directory \"/usr/share/doc/\">
         Options Indexes MultiViews FollowSymLinks
         AllowOverride None
         Order deny,allow
@@ -363,11 +374,22 @@ Listen $puerto
     </Directory>
 
 $ccom
-</VirtualHost>
+</VirtualHost>";
+			if (test -f $apv) then {
+                              sudo ed $apv << EOF
+/\/VirtualHost>
+a
+$vh
 .
 w
 q
 EOF
+			} else {
+                               cat > /tmp/apv << EOF
+$vh
+EOF
+				sudo cp /tmp/apv $apv
+			} fi;
 		} fi;
 	} fi;
 
@@ -381,6 +403,12 @@ a
 w
 q
 EOF
+	} fi;
+	if (test -x /usr/sbin/a2ensite) then {
+		s=`basename $apv`;
+		cmd="sudo a2ensite $s";
+		echo "$cmd";
+		eval "$cmd";
 	} fi;
 	if (test -x /usr/sbin/sestatus) then {
 			sudo ed $apv << EOF
@@ -405,17 +433,27 @@ exit 1;
 	} fi;
 }
 
+# Siempre instalamos lo necesario para desplegar django
+prepdialog
+if (test "$op1" = "") then {
+      dialog --title "Instalando herramientas del sistemas operativo para desplegar con Django" --msgbox "Por instalar Apache, Python, Django, virtualenv, pip y virtualenvwrapper" 10 60
+} else {
+      echo "Instalando lo necesario en su sistema operativo para desplegar con django";
+} fi;
+instalapythondjango
 
+# Lo demás que se haga depende de donde se ejecute
 if (test "$op1" = "desp" -o -f "manage.py") then {
 ## DESPLIEGUE CON APACHE Y WSGI
-	prepdialog
 	nomp=`grep DJANGO_SETTINGS_MODULE manage.py | sed -e "s/.*, \"//g;s/.settings\")//g;s/{{ //g;s/ }}//g"`
 	if (test "$nomp" = "") then {
 		echo "No pudo determinarse nombre de proyecto en manage.py";
 		exit 1;
 	} fi;
 	if (test "$op2" = "") then {
-		dialog --title "Desplegar $nomp sobre Apache con WSGI" --inputbox "Puerto en el que operará (recomendado 443)" 10 60 443 2> $tf3
+		dialog --title "Desplegar $nomp sobre Apache con WSGI" --inputbo
+x "Ingrese el puerto en el que operará la aplicación  WSGI sobre Apache (si no d
+esea desplegar cancele)" 10 60 443 2> $tf3
 		retv=$?
 		puerto=$(cat $tf3)
 		[ $retv -eq 1 -o $retv -eq 255 ] && exit
@@ -424,7 +462,7 @@ if (test "$op1" = "desp" -o -f "manage.py") then {
 		puerto="$op2"
 	} fi;
 	inicializa $puerto
-
+	prepreq
 	wsgi $puerto $apv $miruta $mius $migr "/" $miruta/$nomp/media/ $miruta/$nomp/static/ $miruta/$nomp/wsgi.py
 	#wsgi $puerto $apv $miruta $mius $migr "/" $miruta/app/InterfacesContables/site_media/ $miruta/app/static/ $miruta/conf/apache/django.py
 	dialog --title "Proyecto desplegado" --msgbox "Apache configurado con WSGI y reiniciado" 10 60
@@ -442,12 +480,6 @@ if (test "$op1" = "desp" -o -f "manage.py") then {
 	} fi;
 	nompr=$op1
 	motorbd=$op2
-	if (test "$nompr" = "") then {
-		dialog --title "Ayuda a iniciar proyecto con Django" --msgbox "Por instalar Apache, Python, Django, virtualenv, pip y virtualenvwrapper" 10 60
-	} else {
-		echo "Instalando lo necesario para django";
-	} fi;
-	instalapythondjango
 	if (test "$motorbd" = "") then {
 		dialog --title "Motor de base de datos" --menu "¿Qué motor de bases de datos configurar?" 10 60 5 s "SQLite" o "Oracle" 2> $tf3
 		retv=$?
@@ -475,7 +507,7 @@ if (test "$op1" = "desp" -o -f "manage.py") then {
 	} fi;
 
 	if (test "$nompr" = "") then {
-		dialog --title "Nombre de la aplicacion" --inputbox "Se recomienda solo minusculas, sin espacios y corto" 10 60 2> $tf3
+		dialog --title "Nombre de la aplicacion" --inputbox "Se recomienda corto, solo minusculas y sin espacios (pues también será nombre del módulo)"
 		retv=$?
 		nap=$(cat $tf3)
 		[ $retv -eq 1 -o $retv -eq 255 ] && exit
@@ -486,9 +518,7 @@ if (test "$op1" = "desp" -o -f "manage.py") then {
 	django-admin.py startproject --template https://github.com/vtamara/plantilla-django/zipball/master --extension py,md,rst $nap
 
 	cd $nap
-	sudo pip install -r requirements/local.txt
-	cp $nap/settings/local-dist.py $nap/settings/local.py
-	chmod +x ./manage.py bin/prepdjango.sh
+	prepreq
 	dialog --title "Entorno Instalado" --msgbox "Desarrolle con:
 . ~/.bashrc
 mkvirtualenv p --system-site-packages
@@ -496,7 +526,7 @@ workon $nap
 cd $nap
 make pip
 
-Continue para iniciar servidor de desarrollo que puede
+Presione [ENTER] para iniciar servidor de desarrollo que puede
 examinar en http://127.0.0.1:8000" 15 60;
 	python manage.py runserver
 } fi;
