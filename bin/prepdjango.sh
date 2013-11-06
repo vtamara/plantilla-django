@@ -151,9 +151,8 @@ function instalaoracle {
 		voibl=$voib;
 		echo "Versión de Oracle InstantClient Basic instalada : $voib - ($voibl)";
 		if (test "$voib" = "$voibl" -a "$voib" = "11.2") then {
-			echo "Usar la version instalada? (s/n)";
-			read s
-			if (test "$s" = "s" -o "$s" = "S") then {
+			dialog --title "Oracle InstantClient Basic $voib"  --yesno "¿Usar la version ya instalada?" 10 60
+			if (test "$?" = "0") then {
 				return;
 			} fi;
 		} fi;
@@ -528,7 +527,7 @@ esea desplegar cancele)" 10 60 443 2> $tf3
 	prepreq
 	dialog --title "Entorno Instalado" --msgbox "Desarrolle con:
 . ~/.bashrc
-mkvirtualenv p --system-site-packages
+mkvirtualenv $nap --system-site-packages
 workon $nap
 cd $nap
 make pip
