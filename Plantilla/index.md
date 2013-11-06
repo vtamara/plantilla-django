@@ -6,7 +6,7 @@ description: "Como usar plantilla-django"
 
 {% include JB/setup %}
 
-plantilla-django us una plantilla de proyectos para iniciar nuevos proyectos 
+plantilla-django es una plantilla de proyectos para iniciar nuevos proyectos 
 en Django.  Está disponible en 
 [github](https://github.com/vtamara/plantilla-django)
 
@@ -107,11 +107,13 @@ aplicación (por ejemplo /var/www) asi:
   /tmp/prepdjango.sh
   ```
 al hacerlo se instalaran los paquetes para desarrollar con Django y 
-posteriormente probar el despliegue con Apache y WSGI. A continuación 
-este archivo de comandos le pedirá el nombre del proyecto y el motor de 
-bases de datos por usar.  
+posteriormente probar el despliegue con Apache y WSGI. 
 
 ![por-instalar]({{BASE_PATH}}/static/img/por-instalar.png "Ejecución interactiva")
+
+A continuación este archivo de comandos le pedirá el nombre del proyecto 
+y el motor de bases de datos por usar.  
+
 
 > También puede ejecutarlo dando el nombre del proyecto como primer parámetro
 > por ejemplo: `/tmp/prepdjango.sh miap` 
