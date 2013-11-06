@@ -150,6 +150,13 @@ function instalaoracle {
 		# Version larga de Oracle InstantClient
 		voibl=$voib;
 		echo "Versión de Oracle InstantClient Basic instalada : $voib - ($voibl)";
+		if (test "$voib" = "$voibl" -a "$voib" = "11.2") then {
+			echo "Usar la version instalada? (s/n)";
+			read s
+			if (test "$s" = "s" -o "$s" = "S") then {
+				return;
+			} fi;
+		} fi;
 	}  fi;
 	if (test ! -f /tmp/oracle-instantclient*-basic-*x86_64.rpm) then {
 		echo "Descargue en /tmp la versión 11.2 más reciente de Oracle InstantClient Basic.  Se esperan  oracle-instantclient11.2-basic,  oracle-instantclient11.2-sqlplus, oracle-instantclient11.2-tools, oracle-instantclient11.2-devel"
