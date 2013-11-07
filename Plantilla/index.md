@@ -20,8 +20,8 @@ que además incluye:
 - Archivo de comandos que facilita instalar Django,  iniciar proyectos 
   nuevos con esta plantilla y desplegar proyectos existentes en nuevos 
   servidores.
-- En la rama gh-pages esta documentación y estándares de desarrollo
-- Elementos de fuentes de proyectos Django como [P2PU][p2pu]
+- En la rama `gh-pages` encuentra esta documentación y estándares de desarrollo
+- Elementos de fuentes de proyectos en Django tales como [P2PU][p2pu]
 
 La plantilla Xenith a su vez toma ideas de [Mozilla Playdoh][playdoh] 
 y [Two Scoops of Django][twoscoops], pero todo el código está actualizado 
@@ -102,8 +102,11 @@ Descargue de la plantilla el archivo de comandos bin/prepdjango.sh
 aplicación (por ejemplo /var/www) asi:
 
   ```sh
-  cd /var/www
+  cd /tmp/
+  wget https://raw.github.com/vtamara/plantilla-django/master/bin/prepdjango.sh
   chmod +x ./prepdjango.sh
+  sudo mkdir -p /var/www
+  cd /var/www
   /tmp/prepdjango.sh
   ```
 al hacerlo se instalaran los paquetes para desarrollar con Django y 
