@@ -124,9 +124,27 @@ y el motor de bases de datos por usar.
 > O puede especificar como segundo parámetro el motor de bases de datos por 
 > usar (los posibles son sqlite y oracle):  `/tmp/prepdjango.sh miap oracle`
 
-Después de esto se iniciará el servidor de prueba que podrá examinar en
+Después de esto puede comenzar a editar el proyecto con las instrucciones que verá.
+La primera vez ejecute `. ~/.bashrc` a continuación y en sesiones posteriores:
+```
+  mkvirtualenv miap --system-site-packages
+  workon miap
+  cd miap
+```
+
+Recién creado el proyecto especifique base de datos, usuario y clave en 'ap/settings/local.py'
+y a continuación prepara una base de datos y un sistema de autenticación y administración mínimo con:
+```
+  ./manage.py syncdb
+  ./manage.py migrate
+```
+
+Inicie el servidor de prueba con `./manage.py runserver` y con un navegador examine:
 [http://localhost:8000](http://localhost:8000).
-Al examinar comprobará que se usa bootstrap de Twitter como entorno CSS. 
+
+![recieninstalado]({{BASE_PATH}}/static/img/recieninstalado.png "Sitio recién instalado")
+
+Comprobará que se usa bootstrap de Twitter como entorno CSS. 
 Lo recomendamos para desarrollar con más facilidad aplicaciones receptivas 
 (*responsive*), que se adaptan al dispositivos desde el cual se ven (e.g
 teléfonos inteligentes, tabletas).  Un proyecto django que emplea bootstrap 
@@ -134,20 +152,22 @@ es P2PU, las fuentes de su entorno CSS están en
 https://github.com/p2pu/p2pu-css-framework y la documentación 
 en http://p2pu.github.io/p2pu-css-framework/ 
 
-A continuación detenga el servidor de prueba (con Control-C) y configure 
-aspectos generales y comunes
-a servidores de desarrollo y de despliegue en `miap/settings/base.py`
+Empleando el superusuario que creo cuando inicializó la base de datos podrá ingresar 
+a la interfaz administrativa mínima generada desde:
+[http://localhost:8000/admin/](http://localhost:8000/admin/).
+
+![minadmin]({{BASE_PATH}}/static/img/minadmin.png "Interfaz administrativa mínima")
+
+Puede detener el servidor de prueba (con Control-C) y configurar
+aspectos generales y comunes a servidores de desarrollo y de despliegue en `miap/settings/base.py`
 y las particularidades de la instalación que hace en `miap/settings/local.py`
-replicando cambios a ese archivo en `miap/settings/local.py`
+replicando cambios a ese archivo en `miap/settings/local-dist.py`
 
 Recomendamos que suba su nuevo proyecto a un sistema de control de versiones 
 como git.  
 Incluya todos los archivos excepto `miap/settings/local.py` (pero
 incluya `miap/settings/local-dist.py` con valores por 
 defecto que guien cambios por aplicar a `miap/settings/local.py`).
-
-Configure la base de datos en `miap/settings/base.py` dejando claves en 
-`miap/settings/local.py`.
 
 
 ### Desplegar un proyecto ya desarrollado con Apache y WSGI ###
@@ -163,6 +183,8 @@ desde el URL / en el puerto que especifique.
 
 En cada sitio de producción establezca SECRET_KEY 
 de miap/settings/local.py diferente al de miap/settings/local-dist.py
+
+
 ### Desarrollar con vagrant y virtualbox
 
 vagrant maneja máquinas virtuales desde la línea de comandos automatizando
@@ -174,7 +196,7 @@ con
 puede monitorear abriendo virtualbox
 La primera vez se descargará una máquina virtual mínima.
 
-Una vez suba y esté preparada su máquina virtual, que redirecciona
+Una vez suba y esté preparada su máquina virtual, quedaran redireccionados
 puertos así:
 - 80 al 8080 de su sistema
 - 8000 al 8001
@@ -184,12 +206,12 @@ puertos así:
 Puede ingresar a la caja  de desarrollo con:
 ```vagrant ssh```
 
-En la caja el usuario vagrant tendrá un directorio project
+En la caja el usuario vagrant tendrá un directorio `project`
 que es compartido con su directorio de trabajo --los cambios que haga en
 cualquiera de los dos se ven en el otro.
 
 Avance en el desarrollo y bien pruebe con el servidor web de django:
-./manage.py runserver
+```./manage.py runserver```
 Y examine en su computador en el puerto 8001 o bien despliegue con
 Apache y WSGI en el puerto 90 y examine en su computador en el puerto 8090
 o despliegue en el puerto 443 y examine en su computaodr en el puerto 8443.
