@@ -70,6 +70,23 @@ function prepdialog {
 		sudo yum -y install dialog
 	} fi;
 }
+# Instala  herramientas de desarrollo
+function prepherdes {
+	if (test -x /usr/bin/apt-get) then {
+		r=`which virtualbox`;
+		if (test "$r" = "") then {
+			sudo apt-get install virtualbox
+		} fi;
+		r=`which vagrant`;
+		if (test "$r" = "") then {
+			sudo apt-get install vagrant 
+		} fi;
+	} elif (test -x /usr/bin/yum) then {
+		sudo yum -y install virtualbox
+	} fi;
+}
+
+
 
 # Instala lo basico de Python y Django
 function instalapythondjango {
@@ -100,9 +117,8 @@ function instalapythondjango {
 	sudo pip install virtualenvwrapper;
 	sudo pip install Django
 
-	if (test -f ~/.bashrc) then {
-		confsh=".bashrc";
-	} elif (test -f ~/.profile) then { 
+	confsh=".bashrc";
+	if (test -f ~/.profile) then { 
 		confsh=".profile";
 	} fi;
 	lv="/usr/local/bin"
@@ -196,6 +212,20 @@ EOF
 	sudo ORACLE_HOME=/usr/lib/oracle/11.2/client64/ pip install cx-oracle
 }
 
+function detusygr {
+	mius=`id -nu`;
+	# grupo
+	migr=`id -ng`;
+	if (test "$mius" = "root") then { 
+		mius=`export | grep "SUDO_UID[=]" | sed -e "s/.*=\"//g;s/\"//g"`;
+		migr=`export | grep "SUDO_GID[=]" | sed -e "s/.*=\"//g;s/\"//g"`;
+		if (test "$mius" = "0" -o "$mius" = "") then {
+			echo "Ejecute este script como un usuario (con el cual se ejecutará el wsgi), no como root"
+				exit 1;
+		} fi;
+	} fi;
+}
+
 # Verifica entorno y prepara variables
 # Llena variables miruta, mius y migr
 function inicializa {
@@ -225,19 +255,7 @@ function inicializa {
 	# Ruta a fuentes
 	miruta=`pwd`;
 	# usuario
-	mius=`id -nu`;
-	# grupo
-	migr=`id -ng`;
-	if (test "$mius" = "root") then { 
-		mius=`export | grep "SUDO_UID[=]" | sed -e "s/.*=\"//g;s/\"//g"`;
-		migr=`export | grep "SUDO_GID[=]" | sed -e "s/.*=\"//g;s/\"//g"`;
-		if (test "$mius" = "0" -o "$mius" = "") then {
-			echo "Ejecute este script como un usuario (con el cual se ejecutará el wsgi), no como root"
-				exit 1;
-		} fi;
-	} fi;
-
-
+	detusygr 
 }
 
 # Prepara Apache para ejecutar aplicacion como WSGI
@@ -457,9 +475,7 @@ if (test "$op1" = "desp" -o -f "manage.py") then {
 		exit 1;
 	} fi;
 	if (test "$op2" = "") then {
-		dialog --title "Desplegar $nomp sobre Apache con WSGI" --inputbo
-x "Ingrese el puerto en el que operará la aplicación  WSGI sobre Apache (si no d
-esea desplegar cancele)" 10 60 443 2> $tf3
+		dialog --title "Desplegar $nomp sobre Apache con WSGI" --inputbox "Ingrese el puerto en el que operará la aplicación  WSGI sobre Apache (si no desea desplegar cancele)" 10 60 443 2> $tf3
 		retv=$?
 		puerto=$(cat $tf3)
 		[ $retv -eq 1 -o $retv -eq 255 ] && exit
@@ -512,28 +528,39 @@ esea desplegar cancele)" 10 60 443 2> $tf3
 		exit 1;
 	} fi;
 
-	if (test "$nompr" = "") then {
-		dialog --title "Nombre de la aplicacion" --inputbox "Se recomienda corto, solo minusculas y sin espacios (pues también será nombre del módulo)"
-		retv=$?
-		nap=$(cat $tf3)
-		[ $retv -eq 1 -o $retv -eq 255 ] && exit
-	} else {
-		nap=$nompr
-	} fi;	
-
-	django-admin.py startproject --template https://github.com/vtamara/plantilla-django/zipball/master --extension py,md,rst $nap
-
+	prepherdes
+	while (test "$nap" = "" -o -d "$nap"); do
+		if (test "$nap" != "") then {
+			dialog --title "Nombre de la aplicacion" --inputbox "Ya existe directorio $nap, por favor ingrese otro nombre" 10 60 2> $tf3
+			retv=$?
+			nap=$(cat $tf3)
+			[ $retv -eq 1 -o $retv -eq 255 ] && exit
+		} elif (test "$nompr" = "") then {
+			dialog --title "Nombre de la aplicacion" --inputbox "Se recomienda corto, solo minusculas y sin espacios (pues también será nombre del módulo)" 10 60 2> $tf3
+			retv=$?
+			nap=$(cat $tf3)
+			[ $retv -eq 1 -o $retv -eq 255 ] && exit
+		} else {
+			nap=$nompr
+		} fi;	
+	done;
+	sudo django-admin.py startproject --template https://github.com/vtamara/plantilla-django/zipball/master --extension py,md,rst $nap
+	detusygr 
+	sudo chown -R $mius:$migr $nap
 	cd $nap
 	prepreq
 	dialog --title "Entorno Instalado" --msgbox "Desarrolle con:
-. ~/.bashrc
-mkvirtualenv $nap --system-site-packages
-workon $nap
-cd $nap
-make pip
+  . ~/.bashrc
+  mkvirtualenv $nap --system-site-packages
+  workon $nap
+  cd $nap
+  make
 
-Presione [ENTER] para iniciar servidor de desarrollo que puede
-examinar en http://127.0.0.1:8000" 15 60;
-	python manage.py runserver
+La primera vez especifique base de datos en $nap/settings/local.py y después:
+  ./manage.py syncdb
+  ./manage.py migrate
+Inicie el servidor de prueba con:
+  ./manage.py runserver
+" 18 70;
 } fi;
 
