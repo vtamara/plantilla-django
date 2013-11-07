@@ -133,7 +133,7 @@ La primera vez ejecute `. ~/.bashrc` a continuación y en sesiones posteriores:
 ```
 
 Recién creado el proyecto especifique base de datos, usuario y clave en 'ap/settings/local.py'
-y a continuación prepara una base inicial con:
+y a continuación prepara una base de datos y un sistema de autenticación y administración mínimo con:
 ```
   ./manage.py syncdb
   ./manage.py migrate
@@ -141,6 +141,8 @@ y a continuación prepara una base inicial con:
 
 Inicie el servidor de prueba con `./manage.py runserver` y con un navegador examine:
 [http://localhost:8000](http://localhost:8000).
+
+![recieninstalado]({{BASE_PATH}}/static/img/recieninstalado.png "Sitio recién instalado")
 
 Comprobará que se usa bootstrap de Twitter como entorno CSS. 
 Lo recomendamos para desarrollar con más facilidad aplicaciones receptivas 
@@ -150,11 +152,16 @@ es P2PU, las fuentes de su entorno CSS están en
 https://github.com/p2pu/p2pu-css-framework y la documentación 
 en http://p2pu.github.io/p2pu-css-framework/ 
 
-A continuación detenga el servidor de prueba (con Control-C) y configure 
-aspectos generales y comunes
-a servidores de desarrollo y de despliegue en `miap/settings/base.py`
+Empleando el superusuario que creo cuando inicializó la base de datos podrá ingresar 
+a la interfaz administrativa mínima generada desde:
+[http://localhost:8000/admin/](http://localhost:8000/admin/).
+
+![minadmin]({{BASE_PATH}}/static/img/minadmin.png "Interfaz administrativa mínima")
+
+Puede detener el servidor de prueba (con Control-C) y configurar
+aspectos generales y comunes a servidores de desarrollo y de despliegue en `miap/settings/base.py`
 y las particularidades de la instalación que hace en `miap/settings/local.py`
-replicando cambios a ese archivo en `miap/settings/local.py`
+replicando cambios a ese archivo en `miap/settings/local-dist.py`
 
 Recomendamos que suba su nuevo proyecto a un sistema de control de versiones 
 como git.  
