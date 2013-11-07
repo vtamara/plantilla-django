@@ -502,6 +502,23 @@ if (test "$op1" = "desp" -o -f "manage.py") then {
 	} fi;
 	nompr=$op1
 	motorbd=$op2
+	prepherdes
+	while (test "$nap" = "" -o -d "$nap"); do
+		if (test "$nap" != "") then {
+			dialog --title "Nombre de la aplicacion" --inputbox "Ya existe directorio $nap, por favor ingrese otro nombre" 10 60 2> $tf3
+			retv=$?
+			nap=$(cat $tf3)
+			[ $retv -eq 1 -o $retv -eq 255 ] && exit
+		} elif (test "$nompr" = "") then {
+			dialog --title "Nombre de la aplicacion" --inputbox "Se recomienda corto, solo minusculas y sin espacios (pues también será nombre del módulo)" 10 60 2> $tf3
+			retv=$?
+			nap=$(cat $tf3)
+			[ $retv -eq 1 -o $retv -eq 255 ] && exit
+		} else {
+			nap=$nompr
+		} fi;	
+	done;
+
 	if (test "$motorbd" = "") then {
 		dialog --title "Motor de base de datos" --menu "¿Qué motor de bases de datos configurar?" 10 60 5 s "SQLite" o "Oracle" 2> $tf3
 		retv=$?
@@ -528,22 +545,6 @@ if (test "$op1" = "desp" -o -f "manage.py") then {
 		exit 1;
 	} fi;
 
-	prepherdes
-	while (test "$nap" = "" -o -d "$nap"); do
-		if (test "$nap" != "") then {
-			dialog --title "Nombre de la aplicacion" --inputbox "Ya existe directorio $nap, por favor ingrese otro nombre" 10 60 2> $tf3
-			retv=$?
-			nap=$(cat $tf3)
-			[ $retv -eq 1 -o $retv -eq 255 ] && exit
-		} elif (test "$nompr" = "") then {
-			dialog --title "Nombre de la aplicacion" --inputbox "Se recomienda corto, solo minusculas y sin espacios (pues también será nombre del módulo)" 10 60 2> $tf3
-			retv=$?
-			nap=$(cat $tf3)
-			[ $retv -eq 1 -o $retv -eq 255 ] && exit
-		} else {
-			nap=$nompr
-		} fi;	
-	done;
 	sudo django-admin.py startproject --template https://github.com/vtamara/plantilla-django/zipball/master --extension py,md,rst $nap
 	detusygr 
 	sudo chown -R $mius:$migr $nap
