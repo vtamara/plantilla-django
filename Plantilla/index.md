@@ -1,6 +1,6 @@
 ---
 layout: page
-title: "Plantilla de proyectos Django"
+title: "Plantilla para proyectos Django"
 description: "Como usar plantilla-django"
 ---
 
