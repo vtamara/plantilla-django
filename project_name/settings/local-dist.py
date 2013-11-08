@@ -12,7 +12,7 @@ INSTALLED_APPS = base.INSTALLED_APPS + ('django_nose',)
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': 'db/development.sqlite3',
+        'NAME': base.PROJECT_ROOT + '/db/development.sqlite3',
         'USER': '',
         'PASSWORD': '',
         'HOST': '',
