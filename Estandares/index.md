@@ -40,3 +40,24 @@ es P2PU, las fuentes de su entorno CSS están en
 https://github.com/p2pu/p2pu-css-framework y la documentación 
 en http://p2pu.github.io/p2pu-css-framework/ 
 
+## Bitácoras ##
+
+Emplear el método estándar de Django [Método estándar de Django][logging],
+es decir donde requiera registrar sucesos:
+
+```python
+import logging
+
+logger = logging.getLogger(__name__)
+...
+    logger.error('Lo que se registra en bitacora')
+```
+
+Con la configuración de la plantilla, los mensajes que envíe a esta bitácora
+podrá verlos en la sección Logging de la barra de herramientas de depuración 
+(debug-toolbar), la cual se activa ingresando a la zona administrativa (ruta /admin).
+![http://sinsitioweb.files.wordpress.com/2013/04/captura-de-pantalla-290413-133033.png]
+
+[logging]: https://docs.djangoproject.com/en/dev/topics/logging/
+
+
