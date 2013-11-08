@@ -126,18 +126,20 @@ y el motor de bases de datos por usar.
 
 Después de esto puede comenzar a editar el proyecto con las instrucciones que verá.
 La primera vez ejecute `. ~/.bashrc` a continuación y en sesiones posteriores:
-```sh
+
+  ```sh
   mkvirtualenv miap --system-site-packages 
   workon miap 
   cd miap 
-```
+  ```
 
 Recién creado el proyecto especifique base de datos, usuario y clave en 'ap/settings/local.py'
 y a continuación prepara una base de datos y un sistema de autenticación y administración mínimo con:
-```sh
+
+  ```sh
   ./manage.py syncdb 
   ./manage.py migrate 
-```
+  ```
 
 Inicie el servidor de prueba con `./manage.py runserver` y con un navegador examine:
 [http://localhost:8000](http://localhost:8000).
