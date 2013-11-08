@@ -15,3 +15,15 @@ De donde resumimos:
   preferir usar paréntesis y paréntesis cuadrados para expresiones que 
   requieran varias líneas (en ocasiones puede usarse \).
 * 
+
+
+En su proyecto Django:
+
+* Donde se requieran rutas absolutas relativas al directorio del proyecto
+  usar
+
+```python
+import ap.settings 
+...
+ap.settings.PROJECT_ROOT
+```
