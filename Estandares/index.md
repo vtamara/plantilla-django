@@ -6,6 +6,8 @@ description: ""
 {% include JB/setup %}
 
 
+# Python #
+
 Seguimos 
 [The Style Guide for Python Code](http://www.python.org/dev/peps/pep-0008/).
 De donde resumimos:
@@ -17,7 +19,8 @@ De donde resumimos:
 * 
 
 
-En su proyecto Django:
+# Django #
+
 
 * Donde se requieran rutas absolutas relativas al directorio del proyecto
   usar
@@ -27,3 +30,13 @@ import ap.settings
 ...
 ap.settings.PROJECT_ROOT
 ```
+
+## Entorno CSS ##
+
+Lo recomendamos para desarrollar con más facilidad aplicaciones receptivas 
+(*responsive*), que se adaptan al dispositivos desde el cual se ven (e.g
+teléfonos inteligentes, tabletas).  Un proyecto django que emplea bootstrap 
+es P2PU, las fuentes de su entorno CSS están en 
+https://github.com/p2pu/p2pu-css-framework y la documentación 
+en http://p2pu.github.io/p2pu-css-framework/ 
+
