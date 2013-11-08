@@ -324,7 +324,7 @@ function wsgi {
 	ccom="
 	Alias /site_media/ $media
 	Alias /media/ $media
-        Alias /static/ $static
+        #Alias /static/ $static
 
         LogLevel warn
 
