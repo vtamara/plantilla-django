@@ -21,15 +21,9 @@ En su proyecto Django:
 
 * Donde se requieran rutas absolutas relativas al directorio del proyecto
   usar
+
 ```python
 import ap.settings 
 ...
 ap.settings.PROJECT_ROOT
-```
-
-
-```python
-require 'redcarpet'
-markdown = Redcarpet.new("Hello World!")
-puts markdown.to_html
 ```
