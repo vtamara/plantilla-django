@@ -56,8 +56,8 @@ logger = logging.getLogger(__name__)
 Con la configuración de la plantilla, los mensajes que envíe a esta bitácora
 podrá verlos en la sección Logging de la barra de herramientas de depuración 
 (debug-toolbar), la cual se activa ingresando a la zona administrativa (ruta /admin).
-![http://sinsitioweb.files.wordpress.com/2013/04/captura-de-pantalla-290413-133033.png]
-
+![]
+![debug-toolbar](http://sinsitioweb.files.wordpress.com/2013/04/captura-de-pantalla-290413-133033.png "Barra de herramientas de depuración de http://sinsitioweb.wordpress.com/2013/04/29/usando-debug-toolbar-django/")
 [logging]: https://docs.djangoproject.com/en/dev/topics/logging/
 
 
