@@ -126,17 +126,17 @@ y el motor de bases de datos por usar.
 
 Después de esto puede comenzar a editar el proyecto con las instrucciones que verá.
 La primera vez ejecute `. ~/.bashrc` a continuación y en sesiones posteriores:
-```
-  mkvirtualenv miap --system-site-packages
-  workon miap
-  cd miap
+```sh
+  mkvirtualenv miap --system-site-packages 
+  workon miap 
+  cd miap 
 ```
 
 Recién creado el proyecto especifique base de datos, usuario y clave en 'ap/settings/local.py'
 y a continuación prepara una base de datos y un sistema de autenticación y administración mínimo con:
-```
-  ./manage.py syncdb
-  ./manage.py migrate
+```sh
+  ./manage.py syncdb 
+  ./manage.py migrate 
 ```
 
 Inicie el servidor de prueba con `./manage.py runserver` y con un navegador examine:
@@ -145,12 +145,7 @@ Inicie el servidor de prueba con `./manage.py runserver` y con un navegador exam
 ![recieninstalado]({{BASE_PATH}}/static/img/recieninstalado.png "Sitio recién instalado")
 
 Comprobará que se usa bootstrap de Twitter como entorno CSS. 
-Lo recomendamos para desarrollar con más facilidad aplicaciones receptivas 
-(*responsive*), que se adaptan al dispositivos desde el cual se ven (e.g
-teléfonos inteligentes, tabletas).  Un proyecto django que emplea bootstrap 
-es P2PU, las fuentes de su entorno CSS están en 
-https://github.com/p2pu/p2pu-css-framework y la documentación 
-en http://p2pu.github.io/p2pu-css-framework/ 
+
 
 Empleando el superusuario que creo cuando inicializó la base de datos podrá ingresar 
 a la interfaz administrativa mínima generada desde:
