@@ -35,8 +35,10 @@ ap.settings.PROJECT_ROOT
 
 Lo recomendamos para desarrollar con más facilidad aplicaciones receptivas 
 (*responsive*), que se adaptan al dispositivos desde el cual se ven (e.g
-teléfonos inteligentes, tabletas).  Un proyecto django que emplea bootstrap 
-es P2PU, las fuentes de su entorno CSS están en 
+teléfonos inteligentes, tabletas).  En la plantilla operando se nota al cambiar
+el tamaño de la ventana del navegador.
+
+Un proyecto en Django que emplea bootstrap es P2PU, las fuentes de su entorno CSS están en 
 https://github.com/p2pu/p2pu-css-framework y la documentación 
 en http://p2pu.github.io/p2pu-css-framework/ 
 
