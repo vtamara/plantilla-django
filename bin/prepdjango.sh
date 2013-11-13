@@ -81,7 +81,9 @@ function prepherdes {
 		} fi;
 		r=`which vagrant`;
 		if (test "$r" = "") then {
-			sudo apt-get install vagrant 
+			(cd /tmp/; wget http://files.vagrantup.com/packages/a40522f5fabccb9ddabad03d836e120ff5d14093/vagrant_1.3.5_x86_64.deb)
+			sudo dpkg -i /tmp/vagrant*deb
+			#sudo apt-get install vagrant 
 		} fi;
 	} elif (test -x /usr/bin/yum) then {
 		sudo yum -y install virtualbox
