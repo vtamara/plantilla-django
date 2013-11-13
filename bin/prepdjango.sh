@@ -18,6 +18,8 @@ par="$@"
 op1=$1
 op2=$2
 op3=$3
+op4=$4
+op5=$5
 tf3=/tmp/dialog_3_$$
 # Verifica parametros y entorno e inicializa variables 
 
@@ -145,11 +147,14 @@ EOF
 # Instala  ependencias con pip, desde directorio con aplicacion
 # Si falta copia configuraci<E1>ión local
 function prepreq {
-       sudo pip install -r requirements/local.txt
-       if (test ! -f $nap/settings/local.py) then {
-               cp $nap/settings/local-dist.py $nap/settings/local.py
-       } fi;
-       chmod +x ./manage.py bin/prepdjango.sh
+       	sudo pip install -r requirements/local.txt
+	if (test ! -d $nap/settings/ ) then {
+		echo "Falta directorio de configuracion $nap/settings y modelo de configuracion local $nap/settings/local-dist.py";
+	} elif (test ! -f $nap/settings/local.py) then {
+		cp $nap/settings/local-dist.py $nap/settings/local.py
+	} fi;
+	manage=`find . -name manage.py`
+	chmod +x $manage bin/prepdjango.sh
 }
 
 # Instala Oracle instant Client y prepara para usar desde django
@@ -259,7 +264,7 @@ function inicializa {
 }
 
 # Prepara Apache para ejecutar aplicacion como WSGI
-# wsgi 90 default /home/miusuario/des/nombrecompletoapp miusuario migrupo rutaweb $miruta/app/InterfacesContables/site_media/ $miruta/app/static/ $miruta/app/conf/apache
+# wsgi 90 default /home/miusuario/des/nombrecompletoapp miusuario migrupo rutaweb "Alias /site_media/ $miruta/app/InterfacesContables/site_media/\n Alias /static/ $miruta/app/static/" $miruta/app/conf/apache 
 function wsgi {
 	puerto=$1
 	apv=$2
@@ -267,9 +272,8 @@ function wsgi {
 	mius=$4
 	migr=$5
 	rutaweb=$6
-	media=$7
-	static=$8
- 	appconfapache=$9
+	alias=$7
+ 	appconfapache=$8
 	if (test "$puerto" = "") then {
 		echo "Falta puerto como primer parametro de WSGI";
 		exit 1;
@@ -293,14 +297,6 @@ function wsgi {
 		echo "Problema con rutaweb $rutaweb";
 		exit 1;
 	} fi;
-	if (test ! -d "$media") then {
-		echo "Problema con media $media";
-		exit 1;
-	} fi;
-	if (test ! -d "$static") then {
-		echo "Problema con static $static";
-		exit 1;
-	} fi;
 	if (test ! -f "$appconfapache") then {
 		echo "Problema con appconfapache $appconfapache";
 		exit 1;
@@ -322,9 +318,7 @@ function wsgi {
 	} fi;
 	dappconfapache=`dirname $appconfapache`;
 	ccom="
-	Alias /site_media/ $media
-	Alias /media/ $media
-        #Alias /static/ $static
+	$alias
 
         LogLevel warn
 
@@ -332,18 +326,12 @@ function wsgi {
         WSGIProcessGroup DOMAIN
         WSGIScriptAlias $rutaweb $appconfapache
 
-        <Directory $media>
-                Order deny,allow
-                Allow from all
-                Options -Indexes FollowSymLinks
-        </Directory>
-
         <Directory $dappconfapache>
                 Order deny,allow
                 Allow from all
         </Directory>
 ";
-
+	# echo "OJO ccom=$ccom"; exit 1;
 	grep "WSGIScriptAlias $rutaweb" $apv > /dev/null 2>&1
 	if (test "$?" != "0") then {
 		if (test "$puerto" = "443" -a "$apv" = "/etc/apache2/sites-available/default-ssl") then {
@@ -422,7 +410,8 @@ EOF
 			sudo ed $apv << EOF
 /\/VirtualHost>
 a
-        WSGIPythonPath $ppython
+
+WSGIPythonPath $ppython
 .
 w
 q
@@ -469,7 +458,8 @@ instalapythondjango
 # Lo demás que se haga depende de donde se ejecute
 if (test "$op1" = "desp" -o -f "manage.py") then {
 ## DESPLIEGUE CON APACHE Y WSGI
-	nomp=`grep DJANGO_SETTINGS_MODULE manage.py | sed -e "s/.*, \"//g;s/.settings\")//g;s/{{ //g;s/ }}//g"`
+	manage=`find . -name manage.py`
+	nomp=`grep DJANGO_SETTINGS_MODULE $manage | sed -e "s/.*, \"//g;s/.settings\")//g;s/{{ //g;s/ }}//g"`
 	if (test "$nomp" = "") then {
 		echo "No pudo determinarse nombre de proyecto en manage.py";
 		exit 1;
@@ -485,8 +475,24 @@ if (test "$op1" = "desp" -o -f "manage.py") then {
 	} fi;
 	inicializa $puerto
 	prepreq
-	wsgi $puerto $apv $miruta $mius $migr "/" $miruta/$nomp/media/ $miruta/$nomp/static/ $miruta/$nomp/wsgi.py
-	#wsgi $puerto $apv $miruta $mius $migr "/" $miruta/app/InterfacesContables/site_media/ $miruta/app/static/ $miruta/conf/apache/django.py
+	if (test "$op3" = "") then {
+		rutaweb="/";
+	} else {
+		rutaweb="$op3";
+	} fi;
+	if (test "$op4" = "") then {
+		alias=""
+	} else {
+		alias="$op4";
+	} fi;
+	if (test "$op5" = "") then {
+		rutawsgi="$miruta/$nomp/wsgi.py"
+	} else {
+		rutawsgi="$op5"
+	} fi;
+	#echo "OJO wsgi $puerto $apv $miruta $mius $migr \"$rutaweb\" \"$alias\" \"$rutawsgi\" "
+	wsgi $puerto $apv $miruta $mius $migr "$rutaweb" "$alias" "$rutawsgi" 
+	#wsgi $puerto $apv $miruta $mius $migr "/" "Alias /site_media/ $miruta/app/InterfacesContables/site_media/\n Alias /static/ $miruta/app/static/" $miruta/conf/apache/django.py
 	dialog --title "Proyecto desplegado" --msgbox "Apache configurado con WSGI y reiniciado" 10 60
 	#echo "Asegurese de habilitar el sitio de Apache (por ejemplo a2ensite default) y examinar";
 
