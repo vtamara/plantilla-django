@@ -74,6 +74,7 @@ Pruebas:
 - pylint, pep8, y coverage
 
 Desarrollo:
+
 - vagrant 
 
 Archivos de comandos:
@@ -211,6 +212,6 @@ Avance en el desarrollo y bien pruebe con el servidor web de django:
 ```./manage.py runserver```
 Y examine en su computador en el puerto 8001 o bien despliegue con
 Apache y WSGI en el puerto 90 y examine en su computador en el puerto 8090
-o despliegue en el puerto 443 y examine en su computaodr en el puerto 8443.
+o despliegue en el puerto 443 y examine en su computador en el puerto 8443.
 
 
