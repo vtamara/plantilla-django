@@ -62,4 +62,22 @@ podrá verlos en la sección Logging de la barra de herramientas de depuración
 ![debug-toolbar](http://sinsitioweb.files.wordpress.com/2013/04/captura-de-pantalla-290413-133033.png "Barra de herramientas de depuración de http://sinsitioweb.wordpress.com/2013/04/29/usando-debug-toolbar-django/")
 [logging]: https://docs.djangoproject.com/en/dev/topics/logging/
 
+## Paquetes ##
+
+Los paquetes pip que se requieren para el despliegue de la aplicación especifiquelos
+en requeridos/produccion.txt y los que se requieran para el desarrollo y la 
+ejecución de pruebas especifíquelos en requeridos/desarrollo.txt
+
+Desde el directorio de la aplicación puede instalarlos, actualizarlos o completarlos 
+(después de cambiar esos archivos) con:
+
+```sh
+$ sudo pip -r requeridos.txt
+```
+
+o más breve
+
+```sh
+$ make pip
+```
 
