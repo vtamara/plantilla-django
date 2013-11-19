@@ -75,17 +75,20 @@ function prepdialog {
 # Instala  herramientas de desarrollo
 function prepherdes {
 	if (test -x /usr/bin/apt-get) then {
+		sudo apt-get install ssh
 		r=`which virtualbox`;
 		if (test "$r" = "") then {
 			sudo apt-get install virtualbox
 		} fi;
 		r=`which vagrant`;
 		if (test "$r" = "") then {
-			(cd /tmp/; wget http://files.vagrantup.com/packages/a40522f5fabccb9ddabad03d836e120ff5d14093/vagrant_1.3.5_x86_64.deb)
-			sudo dpkg -i /tmp/vagrant*deb
 			#sudo apt-get install vagrant 
+			(cd /tmp/; wget http://files.vagrantup.com/packages/a405
+22f5fabccb9ddabad03d836e120ff5d14093/vagrant_1.3.5_x86_64.deb)
+>                       sudo dpkg -i /tmp/vagrant*deb
 		} fi;
 	} elif (test -x /usr/bin/yum) then {
+		sudo yum -y install ssh
 		sudo yum -y install virtualbox
 	} fi;
 }
@@ -112,6 +115,7 @@ function instalapythondjango {
 		sudo yum -y install mod_wsgi
 		sudo yum -y install policycoreutils-python
 		sudo yum -y install w3m
+		sudo yum -y install ed
 		sudo chkconfig --levels 235 httpd on
 		sudo /etc/init.d/httpd start
 	} fi;
@@ -156,7 +160,7 @@ function prepreq {
 		cp $nap/settings/local-dist.py $nap/settings/local.py
 	} fi;
 	manage=`find . -name manage.py`
-	chmod +x $manage bin/prepdjango.sh
+	chmod +x "$manage" bin/prepdjango.sh
 }
 
 # Instala Oracle instant Client y prepara para usar desde django
@@ -457,10 +461,10 @@ if (test "$op1" = "") then {
 } fi;
 instalapythondjango
 
+manage=`find . -name manage.py`
 # Lo demás que se haga depende de donde se ejecute
-if (test "$op1" = "desp" -o -f "manage.py") then {
+if (test "$op1" = "desp" -o "$manage" != "") then {
 ## DESPLIEGUE CON APACHE Y WSGI
-	manage=`find . -name manage.py`
 	nomp=`grep DJANGO_SETTINGS_MODULE $manage | sed -e "s/.*, \"//g;s/.settings\")//g;s/{{ //g;s/ }}//g"`
 	if (test "$nomp" = "") then {
 		echo "No pudo determinarse nombre de proyecto en manage.py";
@@ -491,6 +495,20 @@ if (test "$op1" = "desp" -o -f "manage.py") then {
 		rutawsgi="$miruta/$nomp/wsgi.py"
 	} else {
 		rutawsgi="$op5"
+	} fi;
+	echo ": rutawsgi=$rutawsgi";
+	settings=`find . -name settings.py`
+	echo ": settings=$settings"
+	ora=`grep "^[^#]*'ENGINE': *'django.db.backends.oracle'" $settings`
+	if (test "$ora" != "") then {
+		dialog --title "Configurando Oracle" --msgbox "Se verificara y de requerirse se instalara/configurara Oracle Instant Client.  Si instala por primera vez en este sistema deje RPMs de la versión 11.2 en /tmp/" 10 60
+		verificaoracle
+		instalaoracle
+	} fi;
+	req=`find . -name requirements.txt`
+	if (test "$req" != "") then {
+		dreq=`dirname $req`
+		(cd $dreq; sudo pip install -r requirements.txt)
 	} fi;
 	#echo "OJO wsgi $puerto $apv $miruta $mius $migr \"$rutaweb\" \"$alias\" \"$rutawsgi\" "
 	wsgi $puerto $apv $miruta $mius $migr "$rutaweb" "$alias" "$rutawsgi" 

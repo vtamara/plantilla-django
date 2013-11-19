@@ -1,0 +1,19 @@
+# Aqui se especifican paquetes para desarrollo,  pruebas o para el
+# desarrollador, que no se requieren en sitios de producción
+-r production.txt
+
+# Deployment
+Fabric
+
+# Documentation
+Sphinx
+
+# Testing
+nose
+mock
+django-nose
+coverage
+pep8
+pylint
+django-discover-runner
+

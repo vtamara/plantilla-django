@@ -1,0 +1,8 @@
+# Aqui se especifican paquetes que se requieren en sitios de producción y que deben compilarse
+
+#psycopg2
+#MySQL-python
+#cx-oracle
+
+# for bcrypt passwords
+py-bcrypt

@@ -1,4 +1,6 @@
-# Install everything that needs to be compiled
+# En este archivo se ponen paquetes requeridos para producción
+
+# Primero instalamos lo que se debe compilar
 -r compiled.txt
 
 # Django stuff

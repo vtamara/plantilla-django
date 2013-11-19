@@ -1,3 +1,3 @@
-# This file is here because many Platforms as a Service look for
-# requirements.txt in the root directory of a project.
--r requirements/production.txt
+# Diversas Plataformas como Servicio buscan un archivo
+# requirements.txt en el directorio raíz del proyecto
+-r requeridos/prod.txt
