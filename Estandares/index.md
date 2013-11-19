@@ -8,7 +8,7 @@ description: ""
 
 # Python #
 
-Seguimos 
+Seguimos la gran mayoría de 
 [The Style Guide for Python Code][style].
 De donde resumimos:
 
@@ -17,6 +17,7 @@ De donde resumimos:
   preferir usar paréntesis y paréntesis cuadrados para expresiones que 
   requieran varias líneas (en ocasiones puede usarse \).
 * 
+
 
 
 # Django #
@@ -60,6 +61,19 @@ podrá verlos en la sección Logging de la barra de herramientas de depuración
 ![]
 ![debug-toolbar](http://sinsitioweb.files.wordpress.com/2013/04/captura-de-pantalla-290413-133033.png "Barra de herramientas de depuración de http://sinsitioweb.wordpress.com/2013/04/29/usando-debug-toolbar-django/")
 [logging]: https://docs.djangoproject.com/en/dev/topics/logging/
+
+## Control de versiones ##
+
+Recomendamos emplear un repositorio git para controlar versiones y planear nombres
+de versiones.  La siguiente sugerencia se basa en el esquema seguido por OpenBSD:
+* Nombres de versiones con dos números (e.g 1.2). El primer número (mayor) sólo cambia cuando se inician
+  cambios profundos, el segundo número (menor) cambia cuando comienza a planearse un despliegue 
+  y a implementarse las características del mismo.
+* Una rama por cada versión menor (digamos v1.2), con el nombre de la versión menor y en la que se
+  incluyan soluciones a problemas a esa versión cuando se requieran.
+* Una etiqueta cada vez que se despliegue (para facilitar comparar diferencias), puede ser con fecha y
+  entidad donde se desplego (e.g nov18entidad)
+* En la rama master el desarrollo más reciente
 
 ## Paquetes ##
 
