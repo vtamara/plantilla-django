@@ -55,4 +55,18 @@ Vagrant::Config.run do |config|
 	centos.vm.forward_port 443, 9443
     end
 
+    config.vm.define "ubuntu32" do |ubuntu32|
+    	ubuntu32.vm.box = "precise32"
+    	ubuntu32.vm.box_url = "http://files.vagrantup.com/precise32.box"
+    	# Increase vagrant's patience during hang-y CentOS bootup
+    	# see: https://github.com/jedi4ever/veewee/issues/14
+    	ubuntu32.ssh.max_tries = 50
+    	ubuntu32.ssh.timeout   = 300
+	ubuntu32.vm.forward_port 8000, 9001
+	ubuntu32.vm.forward_port 80, 9080
+	ubuntu32.vm.forward_port 90, 9090
+	ubuntu32.vm.forward_port 443, 9443
+    end
+
+
 end

@@ -461,10 +461,10 @@ if (test "$op1" = "") then {
 } fi;
 instalapythondjango
 
-manage=`find . -name manage.py`
 # Lo demás que se haga depende de donde se ejecute
-if (test "$op1" = "desp" -o "$manage" != "") then {
+if (test "$op1" = "desp" -o -f "./manage.py") then {
 ## DESPLIEGUE CON APACHE Y WSGI
+	manage=`find . -name manage.py`
 	nomp=`grep DJANGO_SETTINGS_MODULE $manage | sed -e "s/.*, \"//g;s/.settings\")//g;s/{{ //g;s/ }}//g"`
 	if (test "$nomp" = "") then {
 		echo "No pudo determinarse nombre de proyecto en manage.py";
