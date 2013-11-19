@@ -9,7 +9,7 @@ description: ""
 # Python #
 
 Seguimos 
-[The Style Guide for Python Code](http://www.python.org/dev/peps/pep-0008/).
+[The Style Guide for Python Code][style].
 De donde resumimos:
 
 * Indentación 4 espacios sin usar tabuladores
@@ -38,9 +38,8 @@ Lo recomendamos para desarrollar con más facilidad aplicaciones receptivas
 teléfonos inteligentes, tabletas).  En la plantilla operando se nota al cambiar
 el tamaño de la ventana del navegador.
 
-Un proyecto en Django que emplea bootstrap es P2PU, las fuentes de su entorno CSS están en 
-https://github.com/p2pu/p2pu-css-framework y la documentación 
-en http://p2pu.github.io/p2pu-css-framework/ 
+Un proyecto en Django que emplea bootstrap es P2PU (ver [fuentes][fuentescssp2pu] y [documentación][doccssp2pu]).
+, las fuentes de su entorno CSS están en 
 
 ## Bitácoras ##
 
@@ -64,15 +63,17 @@ podrá verlos en la sección Logging de la barra de herramientas de depuración
 
 ## Paquetes ##
 
-Los paquetes pip que se requieren para el despliegue de la aplicación especifiquelos
-en requeridos/produccion.txt y los que se requieran para el desarrollo y la 
-ejecución de pruebas especifíquelos en requeridos/desarrollo.txt
+Los paquetes para pip que se requieren se especifican en:
+
+- requeridos/prod.txt los requeridos para producción y que no requieren compilación
+- requeridos/comp.txt requeridos para producción y que deben compilarse (como cx-oracle)
+- requeridos/des.txt  requeridod en desarrollo y pruebas pero no en sitios de producción
 
 Desde el directorio de la aplicación puede instalarlos, actualizarlos o completarlos 
 (después de cambiar esos archivos) con:
 
 ```sh
-$ sudo pip -r requeridos.txt
+$ sudo pip -r requirements.txt
 ```
 
 o más breve
@@ -80,4 +81,14 @@ o más breve
 ```sh
 $ make pip
 ```
+Puede consultar más como emplear estos archivos con virtualenv en [pip and friends: packaging][playdohpack]
 
+
+
+[style]: http://www.python.org/dev/peps/pep-0008/
+[fuentescssp2pu]: https://github.com/p2pu/p2pu-css-framework
+[doccssp2pu]: http://p2pu.github.io/p2pu-css-framework/ 
+[playdoh]: https://github.com/mozilla/playdoh
+[twoscoops]: https://github.com/twoscoops/django-twoscoops-project
+[p2pu]: https://github.com/p2pu/lernanta
+[playdohpack]: https://github.com/mozilla/playdoh-docs/blob/master/packages.rst
