@@ -65,7 +65,7 @@ podrá verlos en la sección Logging de la barra de herramientas de depuración
 
 Los paquetes para pip que se requieren se especifican en:
 
-- requeridos/prod.txt los requeridos para producción y que no requieren compilación
+- requeridos/prod.txt los requeridos para producción y que no necesitan compilación
 - requeridos/comp.txt requeridos para producción y que deben compilarse (como cx-oracle)
 - requeridos/des.txt  requeridod en desarrollo y pruebas pero no en sitios de producción
 
@@ -76,11 +76,17 @@ Desde el directorio de la aplicación puede instalarlos, actualizarlos o complet
 $ sudo pip -r requirements.txt
 ```
 
-o más breve
+o más breve para instalar los de producción:
 
 ```sh
-$ make pip
+$ sudo make pip
 ```
+
+Y los de desarrollo
+```sh
+$ sudo make des
+```
+
 Puede consultar más como emplear estos archivos con virtualenv en [pip and friends: packaging][playdohpack]
 
 
