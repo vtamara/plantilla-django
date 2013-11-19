@@ -142,8 +142,8 @@ y a continuación prepara una base de datos y un sistema de autenticación y adm
   ./manage.py migrate 
   ```
 
-Inicie el servidor de prueba con `./manage.py runserver` y con un navegador examine:
-[http://localhost:8000](http://localhost:8000).
+Inicie el servidor de prueba con `./manage.py runserver` (o más breve `make s`) y con un navegador examine:
+[http://localhost:8000](http://127.0.0.1:8000).
 
 ![recieninstalado]({{BASE_PATH}}/static/img/recieninstalado.png "Sitio recién instalado")
 
@@ -211,6 +211,8 @@ cualquiera de los dos se ven en el otro.
 
 Avance en el desarrollo y bien pruebe con el servidor web de django:
 ```./manage.py runserver```
+o 
+```make s```
 Y examine en su computador en el puerto 8001 o bien despliegue con
 Apache y WSGI en el puerto 90 y examine en su computador en el puerto 8090
 o despliegue en el puerto 443 y examine en su computador en el puerto 8443.
