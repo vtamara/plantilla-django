@@ -188,11 +188,12 @@ de miap/settings/local.py diferente al de miap/settings/local-dist.py
 vagrant maneja máquinas virtuales desde la línea de comandos automatizando
 la creación de cajas (boxes) de desarrollo o donde podrá probar el despliegue.
 
-Desde el directorio de una aplicación inicie una máquina virtual de desarrollo
-con
+Desde el directorio de una aplicación inicie la máquina virtual de desarrollo 
+por defecto (Ubuntu Server 12.04) con
 ```vagrant up```
 puede monitorear abriendo virtualbox
-La primera vez se descargará una máquina virtual mínima.
+La primera vez se descargará una máquina virtual mínima.  Hay unas pocas cajas
+en (http://it.sofhouse.net/vagrantboxes.html) y bastantes más en (http://www.vagrantbox.es).
 
 Una vez suba y esté preparada su máquina virtual, quedaran redireccionados
 puertos así:
@@ -214,4 +215,29 @@ Y examine en su computador en el puerto 8001 o bien despliegue con
 Apache y WSGI en el puerto 90 y examine en su computador en el puerto 8090
 o despliegue en el puerto 443 y examine en su computador en el puerto 8443.
 
+Podrá detener esta máquina virtual con 
 
+```
+vagrant halt
+```
+
+Hay una segunda configurada en Vagrantfile (ver 
+[Vagrant Multimáquina][vagrantmulti]), 
+se trata de un CentOS 6.4, las operaciones descritas funcionan de la misma forma 
+pero agregando centos al final, por ejemplo:
+
+```
+vagrant up centos
+vagrant ssh centos
+vagrant halt centos
+```
+
+La redirección de puertos para esta segunda máquina es:
+- 80 al 9080 de su sistema
+- 8000 al 9001
+- 90 al 9090
+- 443 al 9443
+- 22 al 2200
+
+
+[vagrantmulti]: http://docs.vagrantup.com/v2/multi-machine/
