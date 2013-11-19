@@ -1,7 +1,7 @@
 # En este archivo se ponen paquetes requeridos para producción
 
 # Primero instalamos lo que se debe compilar
--r compiled.txt
+-r comp.txt
 
 # Django stuff
 Django>=1.5

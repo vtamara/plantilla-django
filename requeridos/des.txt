@@ -1,6 +1,6 @@
 # Aqui se especifican paquetes para desarrollo,  pruebas o para el
 # desarrollador, que no se requieren en sitios de producción
--r production.txt
+-r prod.txt
 
 # Deployment
 Fabric

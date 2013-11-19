@@ -153,7 +153,8 @@ EOF
 # Instala  ependencias con pip, desde directorio con aplicacion
 # Si falta copia configuraci<E1>ión local
 function prepreq {
-       	sudo pip install -r requirements/local.txt
+	nap="$1"
+       	sudo pip install -r requeridos/des.txt
 	if (test ! -d $nap/settings/ ) then {
 		echo "Falta directorio de configuracion $nap/settings y modelo de configuracion local $nap/settings/local-dist.py";
 	} elif (test ! -f $nap/settings/local.py) then {
@@ -480,7 +481,7 @@ if (test "$op1" = "desp" -o -f "./manage.py") then {
 		puerto="$op2"
 	} fi;
 	inicializa $puerto
-	prepreq
+	prepreq $nomp
 	if (test "$op3" = "") then {
 		rutaweb="/";
 	} else {
@@ -497,8 +498,12 @@ if (test "$op1" = "desp" -o -f "./manage.py") then {
 		rutawsgi="$op5"
 	} fi;
 	echo ": rutawsgi=$rutawsgi";
-	settings=`find . -name settings.py`
+	settings="$nomp/settings/base.�py"
+	if (test "$settings" = "") then {
+		settings=`find . -name settings.py`
+	} fi;
 	echo ": settings=$settings"
+	pwd
 	ora=`grep "^[^#]*'ENGINE': *'django.db.backends.oracle'" $settings`
 	if (test "$ora" != "") then {
 		dialog --title "Configurando Oracle" --msgbox "Se verificara y de requerirse se instalara/configurara Oracle Instant Client.  Si instala por primera vez en este sistema deje RPMs de la versión 11.2 en /tmp/" 10 60
@@ -575,7 +580,7 @@ if (test "$op1" = "desp" -o -f "./manage.py") then {
 	detusygr 
 	sudo chown -R $mius:$migr $nap
 	cd $nap
-	prepreq
+	prepreq $nap
 	dialog --title "Entorno Instalado" --msgbox "Desarrolle con:
   . ~/.bashrc
   mkvirtualenv $nap --system-site-packages

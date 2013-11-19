@@ -1,24 +1,24 @@
 ========================================
-Welcome to {{ project_name }}'s documentation!
+Bienvenido a la documentación de {{ project_name }}
 ========================================
 
-This is a documentation template for a **web application using Django 1.5**.
-Feel free to change this to your liking.
+Esta es una plantilla para la documentación de una **aplicación web que usa Django 1.6**.
+Sientase libre de cambiarla.
 
 
-About
+Acerca de
 -------------
 
-This project uses `Django <http://www.djangoproject.com/>`_.
+Este proyecto usa `Django <http://www.djangoproject.com/>`_.
 
-Contents
+Contenido
 --------
 
 .. toctree::
    :maxdepth: 1
 
 
-Indices and tables
+Indices y tablas
 ------------------
 
 * :ref:`genindex`
