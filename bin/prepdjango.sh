@@ -75,7 +75,7 @@ function prepdialog {
 # Instala  herramientas de desarrollo
 function prepherdes {
 	if (test -x /usr/bin/apt-get) then {
-		sudo apt-get install ssh
+		sudo apt-get install ssh make
 		r=`which virtualbox`;
 		if (test "$r" = "") then {
 			sudo apt-get install virtualbox
@@ -153,7 +153,8 @@ EOF
 # Instala  ependencias con pip, desde directorio con aplicacion
 # Si falta copia configuraci<E1>ión local
 function prepreq {
-       	sudo pip install -r requirements/local.txt
+       	sudo pip install -r requirements.txt
+       	sudo pip install -r requeridos/des.txt
 	if (test ! -d $nap/settings/ ) then {
 		echo "Falta directorio de configuracion $nap/settings y modelo de configuracion local $nap/settings/local-dist.py";
 	} elif (test ! -f $nap/settings/local.py) then {
